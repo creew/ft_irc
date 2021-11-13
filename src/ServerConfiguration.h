@@ -7,18 +7,22 @@
 
 #include <cstring>
 #include <string>
+#include <ostream>
 
-typedef struct Configuration {
+struct Configuration {
     std::string host;
     int port_network;
     std::string password_network;
     int port;
     std::string password;
-} SConfiguration;
+};
 
 class ServerConfiguration {
+private:
+    Configuration configuration;
 public:
-    Configuration parseConfiguration();
+    const Configuration &getConfiguration() const;
+    void parseConfiguration(int argc, char *argv[]);
 };
 
 #endif //FT_IRC_SERVERCONFIGURATION_H
