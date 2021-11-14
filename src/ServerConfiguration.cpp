@@ -4,10 +4,6 @@
 #include <cstring>
 #include "ServerConfiguration.h"
 
-const Configuration &ServerConfiguration::getConfiguration() const {
-    return configuration;
-}
-
 // [host:port_network:password_network] <port> <password>
 void ServerConfiguration::parseConfiguration(int argc, char **argv) {
     int i = 1;
@@ -46,4 +42,8 @@ void ServerConfiguration::parseConfiguration(int argc, char **argv) {
     }
     configuration.port = static_cast<int>(port);
     configuration.password = argv[i];
+}
+
+const Configuration *ServerConfiguration::getConfiguration() const {
+    return &configuration;
 }

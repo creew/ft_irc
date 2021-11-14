@@ -9,13 +9,14 @@
 #include <iostream>
 #include <netdb.h>
 #include <sys/fcntl.h>
+#include "Client.h"
 
 void Server::start() {
 
     startListen();
 }
 
-Server::Server(const Configuration &configuration) : configuration(configuration) {
+Server::Server(const Configuration *configuration) : configuration(configuration) {
     this->client_socket = 0;
     memset(&this->client_sockaddr, 0, sizeof(this->client_sockaddr));
     this->server_socket = 0;
@@ -39,7 +40,7 @@ void Server::initRecvSocket() {
     }
     client_sockaddr.sin_family = AF_INET;
     client_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    client_sockaddr.sin_port = htons(configuration.port);
+    client_sockaddr.sin_port = htons(configuration->port);
     if (bind(client_socket, (struct sockaddr *) &client_sockaddr,
              sizeof(client_sockaddr)) < 0) {
         throw std::invalid_argument("ERROR on binding");
@@ -52,7 +53,7 @@ void Server::initRecvSocket() {
 
 
 bool Server::initSendSocket() {
-    if (!configuration.host.empty() && !configuration.password_network.empty()) {
+    if (!configuration->host.empty() && !configuration->password_network.empty()) {
         int yes = 1;
         server_socket = socket(AF_INET, SOCK_STREAM, 0);
         if (server_socket == -1){
@@ -65,8 +66,8 @@ bool Server::initSendSocket() {
             throw std::invalid_argument("can't setsockopt");
         }
         server_sockaddr.sin_family = AF_INET;
-        Server::getRemoteAddr(&server_sockaddr, configuration.host);
-        server_sockaddr.sin_port = htons(configuration.port_network);
+        Server::getRemoteAddr(&server_sockaddr, configuration->host);
+        server_sockaddr.sin_port = htons(configuration->port_network);
         if (bind(server_socket, (struct sockaddr *) &client_sockaddr,
                  sizeof(server_sockaddr)) < 0) {
             throw std::invalid_argument("ERROR on binding");
@@ -77,22 +78,14 @@ bool Server::initSendSocket() {
 }
 
 void Server::startListen() {
-    int pollsSize = 1;
-    int totalFds = 1;
+    int totalFd;
     initRecvSocket();
-    if (initSendSocket()) {
-        pollsSize++;
-        totalFds++;
-    }
+    bool serverSocket = initSendSocket();
     struct pollfd polls[100];
-    memset(polls, 0, sizeof(polls));
-    polls[0].fd = client_socket;
-    polls[0].events = POLLIN;
-    polls[1].fd = server_socket;
-    polls[1].events = POLLOUT;
     run = true;
     do {
-        int ret = poll(polls, totalFds, -1);
+        totalFd = fillPoll(polls, sizeof(polls) / sizeof(polls[0]), serverSocket);
+        int ret = poll(polls, totalFd, -1);
         if (ret < 0) {
             throw std::invalid_argument(std::string ("ERROR on poll") + strerror(errno));
         }
@@ -114,23 +107,34 @@ void Server::startListen() {
                     throw std::invalid_argument("can't set nonblock");
                 }
                 printf("  New incoming connection - %d\n", new_sd);
-                polls[totalFds].fd = new_sd;
-                polls[totalFds].events = POLLIN;
-                totalFds++;
+                Client *client = new Client(new_sd, configuration);
+                clients.push_back(client);
             } while (new_sd != -1);
         }
-        if (pollsSize == 2) {
+        if (serverSocket) {
 
         }
-        for (int i = pollsSize; i < totalFds; i++) {
+        for (int i = server_socket ? 2 : 1; i < totalFd; i++) {
             char buf[1024];
             if (polls[i].revents) {
-                int r = recv(polls[i].fd, buf, sizeof(buf), 0);
-                std::cout << buf << std::endl;
+                for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); ++it) {
+                    if ((*it)->getFd() == polls[i].fd) {
+                        int r = recv(polls[i].fd, buf, sizeof(buf), 0);
+                        if (r == 0) {
+                            delete (*it);
+                            clients.erase(it--);
+                        } else {
+                            std::cout << buf << std::endl;
+                            (*it)->processData(buf, r);
+                        }
+                    }
+                }
             }
         }
     }  while (run);
 }
+
+
 
 Server::~Server() {
     std::cout << "hello from destructor" << std::endl;
@@ -142,4 +146,25 @@ void Server::getRemoteAddr(struct sockaddr_in *sockaddrIn, const std::string& ad
         throw std::invalid_argument("can't get host by addr");
     }
     memmove(&(sockaddrIn->sin_addr.s_addr), host->h_addr_list[0], 4);
+}
+
+int Server::fillPoll(struct pollfd *polls, int maxSize, bool serverSocket) {
+    int i = 0;
+    polls[i].fd = client_socket;
+    polls[i++].events = POLLIN;
+    if (serverSocket) {
+        polls[i].fd = server_socket;
+        polls[i++].events = POLLOUT;
+    }
+    for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); ++it) {
+        if (i < maxSize) {
+            polls[i].fd = (*it)->getFd();
+            polls[i++].events = POLLIN;
+        }
+        else {
+            std::cerr << "Maximum number of clients reached";
+            break;
+        }
+    }
+    return i;
 }

@@ -21,7 +21,8 @@ class ServerConfiguration {
 private:
     Configuration configuration;
 public:
-    const Configuration &getConfiguration() const;
+    const Configuration *getConfiguration() const;
+
     void parseConfiguration(int argc, char *argv[]);
 };
 

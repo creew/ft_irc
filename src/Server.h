@@ -6,7 +6,10 @@
 #define FT_IRC_SERVER_H
 
 #include <netinet/in.h>
+#include <vector>
 #include "ServerConfiguration.h"
+#include "Client.h"
+
 class Server
 {
 private:
@@ -14,10 +17,12 @@ private:
     struct sockaddr_in client_sockaddr;
     int server_socket;
     struct sockaddr_in server_sockaddr;
+    std::vector<Client *> clients;
     bool run;
 
-    Configuration configuration;
+    const Configuration *configuration;
 
+    int fillPoll(struct pollfd *polls, int maxSize, bool serverSocket);
     void initRecvSocket();
     bool initSendSocket();
     void startListen();
@@ -25,7 +30,7 @@ private:
 public:
     virtual ~Server();
 
-    Server(const Configuration &configuration);
+    explicit Server(const Configuration *configuration);
     void start();
 
 };
