@@ -1,0 +1,1 @@
+nc irc.ircnet.ru 6688

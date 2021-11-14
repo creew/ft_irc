@@ -106,7 +106,7 @@ void Server::startListen() {
                 if (fcntl(new_sd, F_SETFL, O_NONBLOCK) < 0) {
                     throw std::invalid_argument("can't set nonblock");
                 }
-                printf("  New incoming connection - %d\n", new_sd);
+                std::cout << "  New incoming connection - " << new_sd << std::endl;
                 Client *client = new Client(new_sd, configuration);
                 clients.push_back(client);
             } while (new_sd != -1);
@@ -121,6 +121,7 @@ void Server::startListen() {
                     if ((*it)->getFd() == polls[i].fd) {
                         int r = recv(polls[i].fd, buf, sizeof(buf), 0);
                         if (r == 0) {
+                            std::cout << "  Disconnecting - " << polls[i].fd << std::endl;
                             delete (*it);
                             clients.erase(it--);
                         } else {

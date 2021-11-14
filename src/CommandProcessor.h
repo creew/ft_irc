@@ -7,12 +7,14 @@
 
 #include <cstdio>
 #include "ServerConfiguration.h"
+#include "Client.h"
+#include "Message.h"
 
-typedef void (*t_action)(char *command, const Configuration *configuration);
+typedef void (*t_action)(Message *message, Client *client);
 
 struct CommandAction
 {
-    char *command;
+    const char *command;
     t_action action;
 };
 
@@ -20,11 +22,11 @@ class CommandProcessor {
 private:
     CommandProcessor() {}
     static const CommandAction actions[];
-    static void passAction(char *command, const Configuration *configuration);
-    static void nickAction(char *command, const Configuration *configuration);
-    static void userAction(char *command, const Configuration *configuration);
+    static void passAction(Message *message, Client *client);
+    static void nickAction(Message *message, Client *client);
+    static void userAction(Message *message, Client *client);
 public:
-    static void processAction(char *command, const Configuration *configuration);
+    static void processAction(char *message, Client *client);
 };
 
 

@@ -7,50 +7,57 @@
 #include <iostream>
 #include "CommandProcessor.h"
 #include "ServerConfiguration.h"
+#include "Message.h"
 
 const CommandAction CommandProcessor::actions[] = {
         {"PASS", passAction},
-        {"USER", nickAction},
-        {"NICK", userAction}
+        {"USER", userAction},
+        {"NICK", nickAction}
 };
 
 
-void CommandProcessor::processAction(char *command, const Configuration *configuration) {
-    while (*command == ' ') {
-        command++;
+void CommandProcessor::processAction(char *command, Client *client) {
+    Message message;
+    message.parseMessage(command);
+    if (message.getCommand() != NULL) {
+        for (int i = 0; i < sizeof(CommandProcessor::actions) / sizeof(CommandProcessor::actions[0]); i++) {
+            if (strcmp(actions[i].command, message.getCommand()) == 0) {
+                if (actions[i].action) {
+                    actions[i].action(&message, client);
+                    return;
+                }
+            }
+        }
+        std::cout << "Unknown command: " << message.getCommand() << std::endl;
+    } else {
+        std::cout << "Empty command" << std::endl;
     }
-    char *action = command;
-    while (*command != ' ' && *command != '\0') {
-        command++;
-    }
-    if (*command == '\0') {
-        throw std::invalid_argument("invalid command");
-    }
-    *command++ = '\0';
-    while (*command == ' ') {
-        command++;
-    }
-    for (int i = 0; i < sizeof(CommandProcessor::actions) / sizeof(CommandProcessor::actions[0]); i++) {
-        if (strcmp(actions[i].command, action) == 0) {
-            if (actions[i].action) {
-                actions[i].action(command, configuration);
-                return;
+}
+
+void CommandProcessor::passAction(Message *message, Client *client) {
+    const char *serverPassword = client->getServerPassword();
+    if (serverPassword) {
+        if (!message->getParams().empty()) {
+            if (strcmp(message->getParams().at(0), serverPassword) != 0) {
+
             }
         }
     }
-    std::cout << "Unknown action: " << action << std::endl;
 }
 
-void CommandProcessor::passAction(char *command, const Configuration *configuration) {
-    if (strcmp(command, configuration->password.c_str()) != 0) {
-
+void CommandProcessor::nickAction(Message *message, Client *client) {
+    if (!message->getParams().empty()) {
+        client->setNick(message->getParams().at(0));
     }
+    client->sendRplWelcome();
 }
 
-void CommandProcessor::nickAction(char *command, const Configuration *configuration) {
-
-}
-
-void CommandProcessor::userAction(char *command, const Configuration *configuration) {
-
+void CommandProcessor::userAction(Message *message, Client *client) {
+    const std::vector<char *>& params = message->getParams();
+    if (params.size() < 4) {
+        client->sendErrNeedMoreParams(message->getCommand());
+        return;
+    }
+    client->setUser(params.at(0));
+    client->sendRplWelcome();
 }
