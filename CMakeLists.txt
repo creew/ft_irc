@@ -4,12 +4,14 @@ project(ft_irc)
 set(CMAKE_CXX_STANDARD 98)
 
 add_executable(ft_irc src/main.cpp
-        src/Server.cpp src/Server.h
-        src/ServerConfiguration.cpp src/ServerConfiguration.h
-        src/CommandProcessor.cpp src/CommandProcessor.h
-        src/Client.cpp src/Client.h
-        src/StringUtils.cpp src/StringUtils.h
-        src/Message.cpp src/Message.h
-        src/Errors.cpp src/Errors.h)
+        src/Server.cpp headers/Server.h
+        src/ServerConfiguration.cpp headers/ServerConfiguration.h
+        src/CommandProcessor.cpp headers/CommandProcessor.h
+        src/Client.cpp headers/Client.h
+        src/StringUtils.cpp headers/StringUtils.h
+        src/Message.cpp headers/Message.h
+        src/Errors.cpp headers/Errors.h
+        src/OutMessage.cpp headers/OutMessage.h)
 
+include_directories(headers)
 set_property(TARGET ft_irc PROPERTY CXX_STANDARD 98)

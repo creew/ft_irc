@@ -20,10 +20,14 @@ struct Configuration {
 class ServerConfiguration {
 private:
     Configuration configuration;
+
+    static long getPort(const std::string &sport);
 public:
     const Configuration *getConfiguration() const;
 
     void parseConfiguration(int argc, char *argv[]);
+
+    void parseNetworkArg(const std::string &network_arg);
 };
 
 #endif //FT_IRC_SERVERCONFIGURATION_H

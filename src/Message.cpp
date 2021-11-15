@@ -5,7 +5,7 @@
 #include "Message.h"
 #include "StringUtils.h"
 
-void Message::parseMessage(const char *message) {
+Message::Message(const char *message) {
     const char *d;
     message = StringUtils::skipSpaces(message);
     if (*message == ':') {

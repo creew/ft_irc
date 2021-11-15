@@ -26,12 +26,14 @@ private:
     void initRecvSocket();
     bool initSendSocket();
     void startListen();
+    void setSocketOptions(int socket);
     static void getRemoteAddr(sockaddr_in *sockaddrIn, const std::string &addr);
 public:
     virtual ~Server();
 
     explicit Server(const Configuration *configuration);
     void start();
+
 
 };
 

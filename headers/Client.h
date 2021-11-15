@@ -5,7 +5,9 @@
 #ifndef FT_IRC_CLIENT_H
 #define FT_IRC_CLIENT_H
 
+#include <vector>
 #include "ServerConfiguration.h"
+#include "OutMessage.h"
 
 enum ClientState {
     BODY,
@@ -20,11 +22,9 @@ private:
     char *nick;
     char recvBuf[512];
     int recvBufLength;
-    char sendBuf[512];
-    int sendBufLength;
     char state;
     const Configuration *serverConfiguration;
-
+    std::vector<OutMessage *> sendQueue;
 public:
     int getFd() const;
 
@@ -33,6 +33,11 @@ public:
     void processData(const char *data, int length);
     const char *getServerPassword();
     void processCommand(char *buf);
+
+    std::vector<OutMessage *> *getSendQueue() {
+        return &sendQueue;
+    }
+
     void sendRplWelcome();
     void sendErrNeedMoreParams(const char *command);
 
@@ -45,6 +50,8 @@ public:
     void sendRplCreated();
 
     void sendRplMyInfo();
+
+    void sendPong();
 };
 
 

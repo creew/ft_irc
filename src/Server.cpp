@@ -9,10 +9,8 @@
 #include <iostream>
 #include <netdb.h>
 #include <sys/fcntl.h>
-#include "Client.h"
 
 void Server::start() {
-
     startListen();
 }
 
@@ -21,23 +19,14 @@ Server::Server(const Configuration *configuration) : configuration(configuration
     memset(&this->client_sockaddr, 0, sizeof(this->client_sockaddr));
     this->server_socket = 0;
     memset(&this->server_sockaddr, 0, sizeof(this->server_sockaddr));
-    this->configuration = configuration;
 }
 
 void Server::initRecvSocket() {
-    int yes = 1;
     client_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (client_socket == -1){
         throw std::invalid_argument("can't open socket");
     }
-    int flags = fcntl(client_socket, F_GETFL, 0);
-    flags |= O_NONBLOCK;
-    if (fcntl(client_socket, F_SETFL, flags) < 0) {
-        throw std::invalid_argument("can't set nonblock");
-    }
-    if (setsockopt(client_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
-        throw std::invalid_argument("can't setsockopt");
-    }
+    setSocketOptions(client_socket);
     client_sockaddr.sin_family = AF_INET;
     client_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     client_sockaddr.sin_port = htons(configuration->port);
@@ -50,21 +39,25 @@ void Server::initRecvSocket() {
     }
 }
 
-
+void Server::setSocketOptions(int socket) {
+    int yes = 1;
+    int flags = fcntl(socket, F_GETFL, 0);
+    flags |= O_NONBLOCK;
+    if (fcntl(socket, F_SETFL, flags) < 0) {
+        throw std::invalid_argument("can't set nonblock");
+    }
+    if (setsockopt(socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
+        throw std::invalid_argument("can't setsockopt");
+    }
+}
 
 bool Server::initSendSocket() {
     if (!configuration->host.empty() && !configuration->password_network.empty()) {
-        int yes = 1;
         server_socket = socket(AF_INET, SOCK_STREAM, 0);
         if (server_socket == -1){
             throw std::invalid_argument("can't open socket");
         }
-        if (fcntl(server_socket, F_SETFL, O_NONBLOCK) < 0) {
-            throw std::invalid_argument("can't set nonblock");
-        }
-        if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
-            throw std::invalid_argument("can't setsockopt");
-        }
+        setSocketOptions(server_socket);
         server_sockaddr.sin_family = AF_INET;
         Server::getRemoteAddr(&server_sockaddr, configuration->host);
         server_sockaddr.sin_port = htons(configuration->port_network);
@@ -103,9 +96,7 @@ void Server::startListen() {
                     }
                     break;
                 }
-                if (fcntl(new_sd, F_SETFL, O_NONBLOCK) < 0) {
-                    throw std::invalid_argument("can't set nonblock");
-                }
+                setSocketOptions(new_sd);
                 std::cout << "  New incoming connection - " << new_sd << std::endl;
                 Client *client = new Client(new_sd, configuration);
                 clients.push_back(client);
@@ -115,18 +106,37 @@ void Server::startListen() {
 
         }
         for (int i = server_socket ? 2 : 1; i < totalFd; i++) {
-            char buf[1024];
-            if (polls[i].revents) {
-                for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); ++it) {
+            if (polls[i].revents & POLLIN) {
+                for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); it++) {
                     if ((*it)->getFd() == polls[i].fd) {
-                        int r = recv(polls[i].fd, buf, sizeof(buf), 0);
+                        char buf[1025];
+                        int r = recv(polls[i].fd, buf, sizeof(buf) - 1, 0);
+                        buf[r] = '\0';
                         if (r == 0) {
                             std::cout << "  Disconnecting - " << polls[i].fd << std::endl;
                             delete (*it);
                             clients.erase(it--);
                         } else {
-                            std::cout << buf << std::endl;
+                            std::cout << buf;
                             (*it)->processData(buf, r);
+                        }
+                    }
+                }
+            } else if (polls[i].revents & POLLOUT) {
+                for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); it++) {
+                    if ((*it)->getFd() == polls[i].fd) {
+                        std::vector<OutMessage *> *msgs = (*it)->getSendQueue();
+                        if (!msgs->empty()) {
+                            OutMessage *msg = msgs->at(0);
+                            long r = send(polls[i].fd, msg->getMessage(), msg->getLength(), 0);
+                            if (r > 0) {
+                                if (r == msg->getLength()) {
+                                    delete msg;
+                                    msgs->erase(msgs->begin());
+                                } else {
+                                    msg->reduceLength(r);
+                                }
+                            }
                         }
                     }
                 }
@@ -152,15 +162,15 @@ void Server::getRemoteAddr(struct sockaddr_in *sockaddrIn, const std::string& ad
 int Server::fillPoll(struct pollfd *polls, int maxSize, bool serverSocket) {
     int i = 0;
     polls[i].fd = client_socket;
-    polls[i++].events = POLLIN;
+    polls[i++].events = POLLIN | POLLOUT;
     if (serverSocket) {
         polls[i].fd = server_socket;
-        polls[i++].events = POLLOUT;
+        polls[i++].events = POLLIN | POLLOUT;
     }
-    for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); ++it) {
+    for (std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); it++) {
         if (i < maxSize) {
             polls[i].fd = (*it)->getFd();
-            polls[i++].events = POLLIN;
+            polls[i++].events = POLLIN | POLLOUT;
         }
         else {
             std::cerr << "Maximum number of clients reached";

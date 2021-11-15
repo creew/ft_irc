@@ -6,29 +6,30 @@
 #include <cstring>
 #include <iostream>
 #include "CommandProcessor.h"
-#include "ServerConfiguration.h"
-#include "Message.h"
 
 const CommandAction CommandProcessor::actions[] = {
         {"PASS", passAction},
         {"USER", userAction},
-        {"NICK", nickAction}
+        {"NICK", nickAction},
+        {"PONG", emptyAction},
+        {"LIST", listChannels},
+        {"QUIT", emptyAction},
+        {"PING", pingAction},
 };
 
 
 void CommandProcessor::processAction(char *command, Client *client) {
-    Message message;
-    message.parseMessage(command);
-    if (message.getCommand() != NULL) {
+    Message *message = new Message(command);
+    if (message->getCommand() != NULL) {
         for (int i = 0; i < sizeof(CommandProcessor::actions) / sizeof(CommandProcessor::actions[0]); i++) {
-            if (strcmp(actions[i].command, message.getCommand()) == 0) {
+            if (strcmp(actions[i].command, message->getCommand()) == 0) {
                 if (actions[i].action) {
-                    actions[i].action(&message, client);
+                    actions[i].action(message, client);
                     return;
                 }
             }
         }
-        std::cout << "Unknown command: " << message.getCommand() << std::endl;
+        std::cout << "Unknown command: " << message->getCommand() << std::endl;
     } else {
         std::cout << "Empty command" << std::endl;
     }
@@ -61,3 +62,14 @@ void CommandProcessor::userAction(Message *message, Client *client) {
     client->setUser(params.at(0));
     client->sendRplWelcome();
 }
+
+void CommandProcessor::emptyAction(Message *message, Client *client) {
+}
+
+void CommandProcessor::listChannels(Message *message, Client *client) {
+}
+
+void CommandProcessor::pingAction(Message *message, Client *client) {
+    client->sendPong();
+}
+

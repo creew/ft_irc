@@ -16,6 +16,10 @@ private:
 public:
     Message() : prefix(nullptr), command(nullptr) { }
 
+    Message(const char *message);
+
+    Message(char *prefix, char *command, const std::vector<char *> &params);
+
     virtual ~Message();
 
     char *getPrefix() const;

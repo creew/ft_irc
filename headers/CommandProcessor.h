@@ -27,6 +27,12 @@ private:
     static void userAction(Message *message, Client *client);
 public:
     static void processAction(char *message, Client *client);
+
+    static void emptyAction(Message *message, Client *client);
+
+    static void listChannels(Message *message, Client *client);
+
+    static void pingAction(Message *message, Client *client);
 };
 
 
