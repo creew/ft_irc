@@ -1,13 +1,11 @@
-//
-// Created by Алексей on 14.11.2021.
-//
-
 #ifndef FT_IRC_CLIENT_H
 #define FT_IRC_CLIENT_H
 
 #include <vector>
 #include "ServerConfiguration.h"
-#include "OutMessage.h"
+#include "RawMessage.h"
+#include "IServer.h"
+#include "IClient.h"
 
 enum ClientState {
     BODY,
@@ -15,7 +13,7 @@ enum ClientState {
     LF
 };
 
-class Client {
+class Client : public IClient {
 private:
     int fd;
     char *user;
@@ -23,35 +21,41 @@ private:
     char recvBuf[512];
     int recvBufLength;
     char state;
-    const Configuration *serverConfiguration;
-    std::vector<OutMessage *> sendQueue;
-public:
-    int getFd() const;
+    IServer *server;
+    std::vector<RawMessage *> sendQueue;
 
-    Client(int fd, const Configuration *serverConfiguration);
+    void processCommand(char *buf);
+
+public:
+    int getFd() const {
+        return fd;
+    }
+
+    Client(int fd, IServer *server);
+
     virtual ~Client();
     void processData(const char *data, int length);
     const char *getServerPassword();
-    void processCommand(char *buf);
 
-    std::vector<OutMessage *> *getSendQueue() {
+    std::vector<RawMessage *> *getSendQueue() {
         return &sendQueue;
     }
-
-    void sendRplWelcome();
-    void sendErrNeedMoreParams(const char *command);
 
     void setNick(char *const string);
 
     void setUser(char *user);
 
-    void sendRplYourHost();
+    char *getUser() const {
+        return user;
+    }
 
-    void sendRplCreated();
+    char *getNick() const {
+        return nick;
+    }
 
-    void sendRplMyInfo();
+    void pushMessage(RawMessage *outMessage);
 
-    void sendPong();
+    const char *getHostName();
 };
 
 

@@ -1,11 +1,7 @@
-//
-// Created by Edythe Klompus on 11/14/21.
-//
-
-#include "Message.h"
+#include "InMessage.h"
 #include "StringUtils.h"
 
-Message::Message(const char *message) {
+InMessage::InMessage(const char *message) {
     const char *d;
     message = StringUtils::skipSpaces(message);
     if (*message == ':') {
@@ -23,26 +19,26 @@ Message::Message(const char *message) {
     }
     this->command = StringUtils::duplicateString(message, d - message);
     message = StringUtils::skipSpaces(d);
-    StringUtils::splitMessage(&this->params, message);
+    StringUtils::splitMessage(this->params, message);
 }
 
-Message::~Message() {
+InMessage::~InMessage() {
     delete this->prefix;
     delete this->command;
-    for (std::vector<char *>::iterator it = params.begin(); it != params.end(); ++it) {
+    for (std::vector<char *>::iterator it = params.begin(); it != params.end(); it++) {
         delete (*it);
         params.erase(it--);
     }
 }
 
-char *Message::getPrefix() const {
+char *InMessage::getPrefix() const {
     return prefix;
 }
 
-char *Message::getCommand() const {
+char *InMessage::getCommand() const {
     return command;
 }
 
-const std::vector<char *> &Message::getParams() const {
+const std::vector<char *> &InMessage::getParams() const {
     return params;
 }

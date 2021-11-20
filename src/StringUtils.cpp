@@ -1,14 +1,6 @@
-//
-// Created by Edythe Klompus on 11/14/21.
-//
-
 #include "StringUtils.h"
 
-std::vector<char *> *StringUtils::splitMessage(const char *message) {
-    return splitMessage(new std::vector<char *>(), message);
-}
-
-std::vector<char *> *StringUtils::splitMessage(std::vector<char *> *words, const char *message) {
+std::vector<char *> StringUtils::splitMessage(std::vector<char *> &words, const char *message) {
     const char *s, *d;
     do {
         s = skipSpaces(message);
@@ -17,10 +9,10 @@ std::vector<char *> *StringUtils::splitMessage(std::vector<char *> *words, const
             break;
         }
         if (*s == ':') {
-            words->push_back(duplicateString(++s));
+            words.push_back(duplicateString(++s));
             break;
         }
-        words->push_back(duplicateString(s, d - s));
+        words.push_back(duplicateString(s, d - s));
         message = d;
     } while (true);
     return words;
@@ -53,4 +45,8 @@ char *StringUtils::duplicateString(const char *s) {
     strncpy(d, s, length);
     d[length] = '\0';
     return d;
+}
+
+bool StringUtils::isEmpty(const char *s) {
+    return s == NULL || *s == '\0';
 }

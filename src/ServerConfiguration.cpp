@@ -1,6 +1,3 @@
-//
-// Created by Edythe Klompus on 11/13/21.
-//
 #include <cstring>
 #include "ServerConfiguration.h"
 
@@ -16,9 +13,8 @@ void ServerConfiguration::parseConfiguration(int argc, char **argv) {
         parseNetworkArg(network_arg);
     }
     std::string sport = argv[i++];
-    long port = getPort(sport);
-    configuration.port = static_cast<int>(port);
-    configuration.password = argv[i];
+    this->port = static_cast<int>(parsePort(sport));
+    this->password = argv[i];
 }
 
 void ServerConfiguration::parseNetworkArg(const std::string &network_arg) {
@@ -26,18 +22,18 @@ void ServerConfiguration::parseNetworkArg(const std::string &network_arg) {
     if (nhost_pos == std::string::npos) {
         throw std::invalid_argument("usage: ./ircserv [host:port_network:password_network] <port> <password>");
     }
-    configuration.host = network_arg.substr(0, nhost_pos);
+    this->host = network_arg.substr(0, nhost_pos);
 
     size_t nport_pos = network_arg.find(':', nhost_pos + 1);
     if (nport_pos == std::string::npos) {
         throw std::invalid_argument("usage: ./ircserv [host:port_network:password_network] <port> <password>");
     }
-    long port = getPort(network_arg.substr(nhost_pos + 1, nport_pos - (nhost_pos + 1)));
-    configuration.port_network = static_cast<int>(port);
-    configuration.password_network = network_arg.substr(nport_pos + 1);
+    long port = parsePort(network_arg.substr(nhost_pos + 1, nport_pos - (nhost_pos + 1)));
+    this->port_network = static_cast<int>(port);
+    this->password_network = network_arg.substr(nport_pos + 1);
 }
 
-long ServerConfiguration::getPort(const std::string &sport) {
+long ServerConfiguration::parsePort(const std::string &sport) {
     char *end;
     long port = strtol(sport.c_str(), &end, 10);
     if (*end != '\0' || port < 0 || port > 65535) {
@@ -45,8 +41,4 @@ long ServerConfiguration::getPort(const std::string &sport) {
                                     "   port must be positive number less 65535");
     }
     return port;
-}
-
-const Configuration *ServerConfiguration::getConfiguration() const {
-    return &configuration;
 }

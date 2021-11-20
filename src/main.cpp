@@ -7,7 +7,7 @@ int main(int argc, char** argv) {
     ServerConfiguration serverConfiguration;
     try {
         serverConfiguration.parseConfiguration(argc, argv);
-        server = new Server(serverConfiguration.getConfiguration());
+        server = new Server(&serverConfiguration);
         server->start();
     } catch (std::invalid_argument& e) {
         delete server;

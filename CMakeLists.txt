@@ -9,9 +9,20 @@ add_executable(ft_irc src/main.cpp
         src/CommandProcessor.cpp headers/CommandProcessor.h
         src/Client.cpp headers/Client.h
         src/StringUtils.cpp headers/StringUtils.h
-        src/Message.cpp headers/Message.h
-        src/Errors.cpp headers/Errors.h
-        src/OutMessage.cpp headers/OutMessage.h)
+        src/InMessage.cpp headers/InMessage.h
+        headers/Errors.h
+        src/RawMessage.cpp headers/RawMessage.h
+        src/Channel.cpp headers/Channel.h
+        headers/IServer.h headers/commands/ICommand.h
+        src/commands/User.cpp headers/commands/User.h
+        src/commands/Nick.cpp headers/commands/Nick.h
+        src/commands/Ping.cpp headers/commands/Ping.h
+        src/commands/Pong.cpp headers/commands/Pong.h
+        src/commands/List.cpp headers/commands/List.h
+        src/commands/Quit.cpp headers/commands/Quit.h
+        src/commands/Pass.cpp headers/commands/Pass.h
+        headers/IClient.h
+        src/commands/CommonReplies.cpp src/commands/CommonReplies.h)
 
 include_directories(headers)
 set_property(TARGET ft_irc PROPERTY CXX_STANDARD 98)

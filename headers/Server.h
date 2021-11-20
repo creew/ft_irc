@@ -1,7 +1,3 @@
-//
-// Created by Edythe Klompus on 11/13/21.
-//
-
 #ifndef FT_IRC_SERVER_H
 #define FT_IRC_SERVER_H
 
@@ -9,31 +5,47 @@
 #include <vector>
 #include "ServerConfiguration.h"
 #include "Client.h"
+#include "IServer.h"
+#include "Channel.h"
+#include "CommandProcessor.h"
 
-class Server
+using namespace std;
+
+class Server : public IServer
 {
 private:
     int client_socket;
-    struct sockaddr_in client_sockaddr;
-    int server_socket;
-    struct sockaddr_in server_sockaddr;
-    std::vector<Client *> clients;
+
+    vector<IClient *> clients;
+    vector<Channel *> channels;
     bool run;
 
-    const Configuration *configuration;
+    ServerConfiguration *configuration;
+    CommandProcessor *commandProcessor;
 
-    int fillPoll(struct pollfd *polls, int maxSize, bool serverSocket);
+    int fillPoll(struct pollfd *polls, int maxSize);
     void initRecvSocket();
-    bool initSendSocket();
+    int initNetworkServer();
     void startListen();
     void setSocketOptions(int socket);
     static void getRemoteAddr(sockaddr_in *sockaddrIn, const std::string &addr);
 public:
     virtual ~Server();
 
-    explicit Server(const Configuration *configuration);
-    void start();
+    const vector<IClient *> &getClients() const;
 
+    const vector<Channel *> &getChannels() const;
+
+    virtual const ServerConfiguration *getConfiguration() const {
+        return configuration;
+    }
+
+    CommandProcessor *getCommandProcessor() const {
+        return commandProcessor;
+    }
+
+    explicit Server(ServerConfiguration *configuration);
+    void start();
 
 };
 

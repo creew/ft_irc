@@ -1,7 +1,3 @@
-//
-// Created by Edythe Klompus on 11/14/21.
-//
-
 #ifndef FT_IRC_ERRORS_H
 #define FT_IRC_ERRORS_H
 
