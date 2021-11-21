@@ -4,7 +4,7 @@
 #include "ICommand.h"
 
 class User : public ICommand {
-    void run(IClient *client, InMessage *message);
+    bool run(IClient *client, InMessage *message);
 
     const char *getName();
 

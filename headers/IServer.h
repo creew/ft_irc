@@ -8,12 +8,13 @@ class IServer {
 public:
     virtual ~IServer() {}
 
-    virtual const ServerConfiguration *getConfiguration() const = 0;
-
     virtual const vector<Channel *> &getChannels() const = 0;
 
     virtual CommandProcessor *getCommandProcessor() const = 0;
 
+    virtual void removeClientFromChannel(IClient *client) = 0;
+
+    virtual const ServerConfiguration *getConfiguration() const = 0;
 };
 
 #endif

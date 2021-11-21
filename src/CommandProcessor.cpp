@@ -1,5 +1,4 @@
 #include <stdexcept>
-#include <cstring>
 #include <iostream>
 #include <commands/Ping.h>
 #include <commands/List.h>
@@ -8,21 +7,22 @@
 #include <commands/Pong.h>
 #include <commands/User.h>
 #include <commands/Quit.h>
+#include <StringUtils.h>
 #include "CommandProcessor.h"
 
-void CommandProcessor::processAction(char *command, IClient *client) {
+bool CommandProcessor::processAction(char *command, IClient *client) {
     InMessage *message = new InMessage(command);
     if (message->getCommand() != NULL) {
         for (std::vector<ICommand *>::iterator ic = commands.begin(); ic != commands.end(); ic++) {
-            if (strcmp((*ic)->getName(), message->getCommand()) == 0) {
-                (*ic)->run(client, message);
-                return;
+            if (StringUtils::strcmpNoCase((*ic)->getName(), message->getCommand()) == 0) {
+                return (*ic)->run(client, message);
             }
         }
         std::cout << "Unknown command: " << message->getCommand() << std::endl;
     } else {
         std::cout << "Empty command" << std::endl;
     }
+    return false;
 }
 
 CommandProcessor::CommandProcessor() {
@@ -41,4 +41,3 @@ CommandProcessor::~CommandProcessor() {
         commands.erase(ic--);
     }
 }
-

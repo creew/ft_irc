@@ -1,7 +1,7 @@
-#include <RawMessage.h>
 #include "commands/Pong.h"
 
-void Pong::run(IClient *client, InMessage *message) {
+bool Pong::run(IClient *client, InMessage *message) {
+    return false;
 }
 
 const char *Pong::getName() {

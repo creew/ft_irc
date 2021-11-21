@@ -6,7 +6,7 @@
 
 class ICommand {
 public:
-    virtual void run(IClient *client, InMessage *message) = 0;
+    virtual bool run(IClient *client, InMessage *message) = 0;
 
     virtual const char *getName() = 0;
 

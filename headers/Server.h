@@ -4,7 +4,6 @@
 #include <netinet/in.h>
 #include <vector>
 #include "ServerConfiguration.h"
-#include "Client.h"
 #include "IServer.h"
 #include "Channel.h"
 #include "CommandProcessor.h"
@@ -36,7 +35,7 @@ public:
 
     const vector<Channel *> &getChannels() const;
 
-    virtual const ServerConfiguration *getConfiguration() const {
+    const ServerConfiguration *getConfiguration() const {
         return configuration;
     }
 
@@ -45,8 +44,10 @@ public:
     }
 
     explicit Server(ServerConfiguration *configuration);
+
     void start();
 
+    void removeClientFromChannel(IClient *client);
 };
 
 

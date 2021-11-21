@@ -12,7 +12,7 @@ private:
 public:
     InMessage() : prefix(nullptr), command(nullptr) { }
 
-    InMessage(const char *message);
+    explicit InMessage(const char *message);
 
     virtual ~InMessage();
 
@@ -21,8 +21,6 @@ public:
     char *getCommand() const;
 
     const std::vector<char *> &getParams() const;
-
-    void parseMessage(const char *message);
 };
 
 #endif //FT_IRC_INMESSAGE_H

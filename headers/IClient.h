@@ -12,13 +12,13 @@ public:
 
     virtual int getFd() const = 0;
 
-    virtual void processData(const char *data, int length) = 0;
+    virtual bool processData(const char *data, size_t length) = 0;
 
     virtual const char *getServerPassword() = 0;
 
-    virtual void setNick(char *const string) = 0;
+    virtual void setNick(const char *string) = 0;
 
-    virtual void setUser(char *user) = 0;
+    virtual void setUser(const char *user) = 0;
 
     virtual char *getUser() const = 0;
 
@@ -29,6 +29,8 @@ public:
     virtual vector<RawMessage *> *getSendQueue() = 0;
 
     virtual const char *getHostName() = 0;
+
+    virtual vector<Channel *> getChannels() = 0;
 };
 
 #endif

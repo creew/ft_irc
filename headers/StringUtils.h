@@ -13,6 +13,8 @@ public:
     static const char *skipNonSpaces(const char *s);
     static std::vector<char *> splitMessage(std::vector<char *> &words, const char *message);
     static bool isEmpty(const char *s);
+    static char toLower(char c);
+    static int strcmpNoCase(const char *s1, const char *s2);
 };
 
 

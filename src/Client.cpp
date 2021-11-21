@@ -8,8 +8,8 @@ Client::Client(int fd, IServer *server) :
         fd(fd),
         server(server),
         user(nullptr),
-        nick(nullptr),
-        recvBufLength(0) {
+        nick(nullptr), recvBuf(),
+        recvBufLength(0), state() {
 }
 
 Client::~Client() {
@@ -22,14 +22,14 @@ Client::~Client() {
     }
 }
 
-void Client::processData(const char *data, int length) {
+bool Client::processData(const char *data, size_t length) {
     if (length + recvBufLength > sizeof(this->recvBuf)) {
         std::cerr << "unsupported length message received, clean";
         this->recvBufLength = 0;
         this->state = BODY;
         if (length > sizeof(this->recvBuf)) {
             std::cerr << "unsupported length message received, exit";
-            return;
+            return false;
         }
     }
 
@@ -47,16 +47,19 @@ void Client::processData(const char *data, int length) {
                 }
                 else {
                     this->recvBuf[this->recvBufLength - 2] = '\0';
-                    processCommand(this->recvBuf);
+                    if (processCommand(this->recvBuf)) {
+                        return true;
+                    }
                     this->recvBufLength = 0;
                 }
                 this->state = BODY;
         }
     }
+    return false;
 }
 
-void Client::processCommand(char *buf) {
-    server->getCommandProcessor()->processAction(buf, this);
+bool Client::processCommand(char *buf) {
+    return server->getCommandProcessor()->processAction(buf, this);
 }
 
 const char *Client::getServerPassword() {
@@ -67,11 +70,11 @@ const char *Client::getServerPassword() {
     return nullptr;
 }
 
-void Client::setUser(char *const user) {
+void Client::setUser(const char *user) {
     this->user = StringUtils::duplicateString(user);
 }
 
-void Client::setNick(char *const nick) {
+void Client::setNick(const char *nick) {
     this->nick = StringUtils::duplicateString(nick);
 }
 

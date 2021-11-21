@@ -7,13 +7,12 @@
 #include "IClient.h"
 #include "InMessage.h"
 
-
 class CommandProcessor {
     vector<ICommand *> commands;
 public:
     CommandProcessor();
 
-    void processAction(char *message, IClient *client);
+    bool processAction(char *message, IClient *client);
 
     virtual ~CommandProcessor();
 };

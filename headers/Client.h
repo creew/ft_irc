@@ -24,7 +24,7 @@ private:
     IServer *server;
     std::vector<RawMessage *> sendQueue;
 
-    void processCommand(char *buf);
+    bool processCommand(char *buf);
 
 public:
     int getFd() const {
@@ -34,16 +34,16 @@ public:
     Client(int fd, IServer *server);
 
     virtual ~Client();
-    void processData(const char *data, int length);
+    bool processData(const char *data, size_t length);
     const char *getServerPassword();
 
     std::vector<RawMessage *> *getSendQueue() {
         return &sendQueue;
     }
 
-    void setNick(char *const string);
+    void setNick(const char *string);
 
-    void setUser(char *user);
+    void setUser(const char *user);
 
     char *getUser() const {
         return user;
@@ -56,6 +56,10 @@ public:
     void pushMessage(RawMessage *outMessage);
 
     const char *getHostName();
+
+    std::vector<Channel *> getChannels() {
+        return server->getChannels();
+    }
 };
 
 

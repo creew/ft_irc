@@ -14,9 +14,6 @@ InMessage::InMessage(const char *message) {
         message = StringUtils::skipSpaces(d);
     }
     d = StringUtils::skipNonSpaces(message);
-    if (*d == '\0') {
-        return;
-    }
     this->command = StringUtils::duplicateString(message, d - message);
     message = StringUtils::skipSpaces(d);
     StringUtils::splitMessage(this->params, message);

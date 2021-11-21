@@ -5,6 +5,8 @@
 #include <iostream>
 #include <netdb.h>
 #include <sys/fcntl.h>
+#include <unistd.h>
+#include <Client.h>
 #include "RawMessage.h"
 
 void Server::start() {
@@ -107,7 +109,7 @@ void Server::startListen() {
                 for (vector<IClient *>::iterator client = clients.begin(); client != clients.end(); client++) {
                     char buf[1025];
                     if ((*client)->getFd() == polls[i].fd) {
-                        int r = recv(polls[i].fd, buf, sizeof(buf) - 1, 0);
+                        size_t r = recv(polls[i].fd, buf, sizeof(buf) - 1, 0);
                         buf[r] = '\0';
                         if (r == 0) {
                             cout << "  Disconnecting - " << polls[i].fd << endl;
@@ -115,7 +117,10 @@ void Server::startListen() {
                             clients.erase(client--);
                         } else {
                             cout << buf;
-                            (*client)->processData(buf, r);
+                            if ((*client)->processData(buf, r)) {
+                                removeClientFromChannel(*client);
+                                clients.erase(client--);
+                            }
                         }
                     }
                 }
@@ -172,4 +177,21 @@ const vector<IClient *> &Server::getClients() const {
 
 const vector<Channel *> &Server::getChannels() const {
     return channels;
+}
+
+void Server::removeClientFromChannel(IClient *client) {
+    close(client->getFd());
+    for (vector<Channel *>::iterator ic = channels.begin(); ic != channels.end(); ic++) {
+        Channel *channel = (*ic);
+        vector<IClient *> users = channel->getUsers();
+        for (vector<IClient *>::iterator iu = users.begin(); iu != users.end(); iu++) {
+            if ((*iu) == client) {
+                users.erase(iu--);
+            }
+        }
+        if (users.size() == 0) {
+            delete channel;
+            channels.erase(ic--);
+        }
+    }
 }

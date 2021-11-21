@@ -2,8 +2,9 @@
 #include <RawMessage.h>
 #include "commands/List.h"
 
-void List::run(IClient *client, InMessage *message) {
+bool List::run(IClient *client, InMessage *message) {
     sendRplListStart(client);
+    return false;
 }
 
 const char *List::getName() {
@@ -17,8 +18,12 @@ void List::sendRplListStart(IClient *client) {
 }
 
 void List::sendRplList(IClient *client) {
-    RawMessage *msg = new RawMessage(":%s %03d %s Channel :Users  Name", client->getHostName(), RPL_LIST, client->getNick());
-    client->pushMessage(msg);
+    std::vector<Channel *> channels = client->getChannels();
+    for (std::vector<Channel *>::iterator ic = channels.begin(); ic != channels.end(); ic++) {
+        RawMessage *msg = new RawMessage(":%s %03d %s %s %d  Name", client->getHostName(), RPL_LIST, (*ic)->getName().c_str(),
+                                         client->getNick());
+        client->pushMessage(msg);
+    }
     sendRplEnd(client);
 }
 

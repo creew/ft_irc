@@ -1,7 +1,7 @@
 #include "commands/Quit.h"
 
-void Quit::run(IClient *client, InMessage *message) {
-
+bool Quit::run(IClient *client, InMessage *message) {
+    return true;
 }
 
 const char *Quit::getName() {

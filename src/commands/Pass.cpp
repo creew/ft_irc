@@ -1,6 +1,6 @@
 #include "commands/Pass.h"
 
-void Pass::run(IClient *client, InMessage *message) {
+bool Pass::run(IClient *client, InMessage *message) {
     const char *serverPassword = client->getServerPassword();
     if (serverPassword) {
         if (!message->getParams().empty()) {
@@ -9,6 +9,7 @@ void Pass::run(IClient *client, InMessage *message) {
             }
         }
     }
+    return false;
 }
 
 const char *Pass::getName() {

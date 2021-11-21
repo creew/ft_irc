@@ -2,9 +2,10 @@
 
 #include "commands/Ping.h"
 
-void Ping::run(IClient *client, InMessage *message) {
+bool Ping::run(IClient *client, InMessage *message) {
     RawMessage *msg = new RawMessage(":%s PONG %s :%s", client->getHostName(), client->getHostName(), client->getNick());
     client->pushMessage(msg);
+    return false;
 }
 
 const char *Ping::getName() {

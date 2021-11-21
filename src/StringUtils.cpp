@@ -50,3 +50,22 @@ char *StringUtils::duplicateString(const char *s) {
 bool StringUtils::isEmpty(const char *s) {
     return s == NULL || *s == '\0';
 }
+
+char StringUtils::toLower(char c)
+{
+    if (c >= 'a' && c <= 'z')
+        return (c - 'a' + 'A');
+    return (c);
+}
+
+int	StringUtils::strcmpNoCase(const char *s1, const char *s2)
+{
+    while (*s1 && *s2)
+    {
+        if (*s1 != *s2)
+            return ((unsigned char) toLower(*s1) - (unsigned char) toLower(*s2));
+        s1++;
+        s2++;
+    }
+    return ((unsigned char)*s1 - (unsigned char)*s2);
+}

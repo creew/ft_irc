@@ -3,16 +3,17 @@
 #include "commands/User.h"
 #include "CommonReplies.h"
 
-void User::run(IClient *client, InMessage *message) {
+bool User::run(IClient *client, InMessage *message) {
     const std::vector<char *>& params = message->getParams();
     if (params.size() < 4) {
         sendErrNeedMoreParams(client, message->getCommand());
-        return;
+        return false;
     }
     client->setUser(params.at(0));
     if (client->getNick()) {
         CommonReplies::sendRplWelcome(client);
     }
+    return false;
 }
 
 const char *User::getName() {
