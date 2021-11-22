@@ -2,7 +2,7 @@
 
 #include "commands/Ping.h"
 
-bool Ping::run(IClient *client, InMessage *message) {
+bool Ping::run(Client *client, InMessage *message) {
     RawMessage *msg = new RawMessage(":%s PONG %s :%s", client->getHostName(), client->getHostName(), client->getNick());
     client->pushMessage(msg);
     return false;

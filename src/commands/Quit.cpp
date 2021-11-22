@@ -1,6 +1,6 @@
 #include "commands/Quit.h"
 
-bool Quit::run(IClient *client, InMessage *message) {
+bool Quit::run(Client *client, InMessage *message) {
     return true;
 }
 

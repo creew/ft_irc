@@ -1,6 +1,7 @@
 #include "StringUtils.h"
 
-std::vector<char *> StringUtils::splitMessage(std::vector<char *> &words, const char *message) {
+
+void StringUtils::splitMessage(vector<string> &words, const char *message) {
     const char *s, *d;
     do {
         s = skipSpaces(message);
@@ -9,13 +10,13 @@ std::vector<char *> StringUtils::splitMessage(std::vector<char *> &words, const 
             break;
         }
         if (*s == ':') {
-            words.push_back(duplicateString(++s));
+            words.push_back(++s);
             break;
         }
-        words.push_back(duplicateString(s, d - s));
+        string word = string(s, d - s);
+        words.push_back(word);
         message = d;
     } while (true);
-    return words;
 }
 
 const char *StringUtils::skipSpaces(const char *s) {
@@ -51,7 +52,7 @@ bool StringUtils::isEmpty(const char *s) {
     return s == NULL || *s == '\0';
 }
 
-char StringUtils::toLower(char c)
+char StringUtils::toUpper(char c)
 {
     if (c >= 'a' && c <= 'z')
         return (c - 'a' + 'A');
@@ -63,7 +64,7 @@ int	StringUtils::strcmpNoCase(const char *s1, const char *s2)
     while (*s1 && *s2)
     {
         if (*s1 != *s2)
-            return ((unsigned char) toLower(*s1) - (unsigned char) toLower(*s2));
+            return ((unsigned char) toUpper(*s1) - (unsigned char) toUpper(*s2));
         s1++;
         s2++;
     }

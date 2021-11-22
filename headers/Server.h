@@ -4,23 +4,25 @@
 #include <netinet/in.h>
 #include <vector>
 #include "ServerConfiguration.h"
-#include "IServer.h"
 #include "Channel.h"
 #include "CommandProcessor.h"
+#include "ChannelHandler.h"
 
 using namespace std;
 
-class Server : public IServer
+class ChannelHandler;
+class Client;
+class Server
 {
 private:
     int client_socket;
 
-    vector<IClient *> clients;
-    vector<Channel *> channels;
+    vector<Client *> clients;
     bool run;
 
     ServerConfiguration *configuration;
     CommandProcessor *commandProcessor;
+    ChannelHandler *channelHandler;
 
     int fillPoll(struct pollfd *polls, int maxSize);
     void initRecvSocket();
@@ -31,23 +33,17 @@ private:
 public:
     virtual ~Server();
 
-    const vector<IClient *> &getClients() const;
+    vector<Client *> &getClients();
 
-    const vector<Channel *> &getChannels() const;
+    vector<Channel *> &getChannels();
 
-    const ServerConfiguration *getConfiguration() const {
-        return configuration;
-    }
+    const ServerConfiguration *getConfiguration() const;
 
-    CommandProcessor *getCommandProcessor() const {
-        return commandProcessor;
-    }
+    CommandProcessor *getCommandProcessor() const;
 
     explicit Server(ServerConfiguration *configuration);
 
     void start();
-
-    void removeClientFromChannel(IClient *client);
 };
 
 

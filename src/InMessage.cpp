@@ -22,10 +22,6 @@ InMessage::InMessage(const char *message) {
 InMessage::~InMessage() {
     delete this->prefix;
     delete this->command;
-    for (std::vector<char *>::iterator it = params.begin(); it != params.end(); it++) {
-        delete (*it);
-        params.erase(it--);
-    }
 }
 
 char *InMessage::getPrefix() const {
@@ -36,6 +32,6 @@ char *InMessage::getCommand() const {
     return command;
 }
 
-const std::vector<char *> &InMessage::getParams() const {
+std::vector<std::string> &InMessage::getParams() {
     return params;
 }

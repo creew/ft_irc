@@ -4,8 +4,8 @@
 #include <vector>
 #include "ServerConfiguration.h"
 #include "RawMessage.h"
-#include "IServer.h"
-#include "IClient.h"
+#include "Server.h"
+#include "Client.h"
 
 enum ClientState {
     BODY,
@@ -13,7 +13,9 @@ enum ClientState {
     LF
 };
 
-class Client : public IClient {
+class ChannelHandler;
+class Server;
+class Client {
 private:
     int fd;
     char *user;
@@ -21,45 +23,36 @@ private:
     char recvBuf[512];
     int recvBufLength;
     char state;
-    IServer *server;
+    Server *server;
+    ChannelHandler *channelHandler;
     std::vector<RawMessage *> sendQueue;
 
     bool processCommand(char *buf);
 
 public:
-    int getFd() const {
-        return fd;
-    }
+    int getFd() const;
 
-    Client(int fd, IServer *server);
+    ChannelHandler *getChannelHandler() const;
+
+    Client(int fd, Server *server, ChannelHandler *channelHandler);
 
     virtual ~Client();
     bool processData(const char *data, size_t length);
     const char *getServerPassword();
 
-    std::vector<RawMessage *> *getSendQueue() {
-        return &sendQueue;
-    }
-
     void setNick(const char *string);
 
     void setUser(const char *user);
 
-    char *getUser() const {
-        return user;
-    }
+    char *getUser() const;
 
-    char *getNick() const {
-        return nick;
-    }
+    char *getNick() const;
 
     void pushMessage(RawMessage *outMessage);
 
     const char *getHostName();
 
-    std::vector<Channel *> getChannels() {
-        return server->getChannels();
-    }
+    void sendMessages();
 };
 
 

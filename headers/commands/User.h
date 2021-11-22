@@ -4,12 +4,12 @@
 #include "ICommand.h"
 
 class User : public ICommand {
-    bool run(IClient *client, InMessage *message);
+    bool run(Client *client, InMessage *message);
 
     const char *getName();
 
 private:
-    void sendErrNeedMoreParams(IClient *client, const char *command);
+    void sendErrNeedMoreParams(Client *client, const char *command);
 };
 
 #endif //FT_IRC_USER_H

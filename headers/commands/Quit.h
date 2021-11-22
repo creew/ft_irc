@@ -4,7 +4,7 @@
 #include "ICommand.h"
 
 class Quit : public ICommand{
-    bool run(IClient *client, InMessage *message);
+    bool run(Client *client, InMessage *message);
 
     const char *getName();
 };

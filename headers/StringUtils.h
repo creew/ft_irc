@@ -2,6 +2,9 @@
 #define FT_IRC_STRINGUTILS_H
 
 #include <vector>
+#include <string>
+
+using namespace std;
 
 class StringUtils {
 private:
@@ -11,10 +14,11 @@ public:
     static char *duplicateString(const char *s, size_t length);
     static char *duplicateString(const char *s);
     static const char *skipNonSpaces(const char *s);
-    static std::vector<char *> splitMessage(std::vector<char *> &words, const char *message);
     static bool isEmpty(const char *s);
-    static char toLower(char c);
+    static char toUpper(char c);
     static int strcmpNoCase(const char *s1, const char *s2);
+
+    static void splitMessage(vector<string> &words, const char *message);
 };
 
 

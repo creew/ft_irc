@@ -5,7 +5,6 @@
 #include <iostream>
 #include <netdb.h>
 #include <sys/fcntl.h>
-#include <unistd.h>
 #include <Client.h>
 #include "RawMessage.h"
 
@@ -16,11 +15,13 @@ void Server::start() {
 Server::Server(ServerConfiguration *configuration) : configuration(configuration) {
     this->client_socket = 0;
     this->commandProcessor = new CommandProcessor();
+    this->channelHandler = new ChannelHandler();
 }
 
 Server::~Server() {
     cout << "hello from destructor" << endl;
     delete commandProcessor;
+    delete channelHandler;
 }
 
 void Server::initRecvSocket() {
@@ -100,13 +101,13 @@ void Server::startListen() {
                 }
                 setSocketOptions(new_sd);
                 cout << "  New incoming connection - " << new_sd << std::endl;
-                IClient *client = new Client(new_sd, this);
+                Client *client = new Client(new_sd, this, channelHandler);
                 clients.push_back(client);
             } while (new_sd != -1);
         }
         for (int i = 1; i < totalFd; i++) {
             if (polls[i].revents & POLLIN) {
-                for (vector<IClient *>::iterator client = clients.begin(); client != clients.end(); client++) {
+                for (vector<Client *>::iterator client = clients.begin(); client != clients.end(); client++) {
                     char buf[1025];
                     if ((*client)->getFd() == polls[i].fd) {
                         size_t r = recv(polls[i].fd, buf, sizeof(buf) - 1, 0);
@@ -118,28 +119,17 @@ void Server::startListen() {
                         } else {
                             cout << buf;
                             if ((*client)->processData(buf, r)) {
-                                removeClientFromChannel(*client);
+                                channelHandler->removeClientFromChannel(*client);
                                 clients.erase(client--);
                             }
                         }
                     }
                 }
             } else if (polls[i].revents & POLLOUT) {
-                for (vector<IClient *>::iterator client = clients.begin(); client != clients.end(); client++) {
-                    if ((*client)->getFd() == polls[i].fd) {
-                        vector<RawMessage *> *msgs = (*client)->getSendQueue();
-                        if (!msgs->empty()) {
-                            RawMessage *msg = msgs->at(0);
-                            long r = send(polls[i].fd, msg->getMessage(), msg->getLength(), 0);
-                            if (r > 0) {
-                                if (r == msg->getLength()) {
-                                    delete msg;
-                                    msgs->erase(msgs->begin());
-                                } else {
-                                    msg->reduceLength(r);
-                                }
-                            }
-                        }
+                for (vector<Client *>::iterator it = clients.begin(); it != clients.end(); it++) {
+                    Client *client = *it;
+                    if (client->getFd() == polls[i].fd) {
+                        client->sendMessages();
                     }
                 }
             }
@@ -159,7 +149,7 @@ int Server::fillPoll(struct pollfd *polls, int maxSize) {
     int i = 0;
     polls[i].fd = client_socket;
     polls[i++].events = POLLIN | POLLOUT;
-    for (vector<IClient *>::iterator it = clients.begin(); it != clients.end(); it++) {
+    for (vector<Client *>::iterator it = clients.begin(); it != clients.end(); it++) {
         if (i < maxSize) {
             polls[i].fd = (*it)->getFd();
             polls[i++].events = POLLIN | POLLOUT;
@@ -171,27 +161,14 @@ int Server::fillPoll(struct pollfd *polls, int maxSize) {
     return i;
 }
 
-const vector<IClient *> &Server::getClients() const {
+vector<Client *> &Server::getClients() {
     return clients;
 }
 
-const vector<Channel *> &Server::getChannels() const {
-    return channels;
+CommandProcessor *Server::getCommandProcessor() const {
+    return commandProcessor;
 }
 
-void Server::removeClientFromChannel(IClient *client) {
-    close(client->getFd());
-    for (vector<Channel *>::iterator ic = channels.begin(); ic != channels.end(); ic++) {
-        Channel *channel = (*ic);
-        vector<IClient *> users = channel->getUsers();
-        for (vector<IClient *>::iterator iu = users.begin(); iu != users.end(); iu++) {
-            if ((*iu) == client) {
-                users.erase(iu--);
-            }
-        }
-        if (users.size() == 0) {
-            delete channel;
-            channels.erase(ic--);
-        }
-    }
+const ServerConfiguration *Server::getConfiguration() const {
+    return configuration;
 }

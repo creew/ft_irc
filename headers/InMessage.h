@@ -3,12 +3,13 @@
 
 
 #include <vector>
+#include <string>
 
 class InMessage {
 private:
     char *prefix;
     char *command;
-    std::vector<char *> params;
+    std::vector<std::string> params;
 public:
     InMessage() : prefix(nullptr), command(nullptr) { }
 
@@ -20,7 +21,7 @@ public:
 
     char *getCommand() const;
 
-    const std::vector<char *> &getParams() const;
+    std::vector<std::string> &getParams();
 };
 
 #endif //FT_IRC_INMESSAGE_H

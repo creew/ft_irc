@@ -5,7 +5,7 @@
 #include "ICommand.h"
 
 class Ping : public ICommand{
-    bool run(IClient *client, InMessage *message);
+    bool run(Client *client, InMessage *message);
 
     const char *getName();
 };

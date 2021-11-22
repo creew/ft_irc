@@ -1,9 +1,9 @@
 #include "commands/Nick.h"
-#include "CommonReplies.h"
+#include "commands/CommonReplies.h"
 
-bool Nick::run(IClient *client, InMessage *message) {
+bool Nick::run(Client *client, InMessage *message) {
     if (!message->getParams().empty()) {
-        client->setNick(message->getParams().at(0));
+        client->setNick(message->getParams().at(0).c_str());
     }
     CommonReplies::sendRplWelcome(client);
     return false;

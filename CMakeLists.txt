@@ -13,7 +13,7 @@ add_executable(ft_irc src/main.cpp
         headers/Errors.h
         src/RawMessage.cpp headers/RawMessage.h
         src/Channel.cpp headers/Channel.h
-        headers/IServer.h headers/commands/ICommand.h
+        headers/commands/ICommand.h
         src/commands/User.cpp headers/commands/User.h
         src/commands/Nick.cpp headers/commands/Nick.h
         src/commands/Ping.cpp headers/commands/Ping.h
@@ -21,8 +21,7 @@ add_executable(ft_irc src/main.cpp
         src/commands/List.cpp headers/commands/List.h
         src/commands/Quit.cpp headers/commands/Quit.h
         src/commands/Pass.cpp headers/commands/Pass.h
-        headers/IClient.h
-        src/commands/CommonReplies.cpp src/commands/CommonReplies.h)
+        src/commands/CommonReplies.cpp headers/commands/CommonReplies.h src/commands/Join.cpp headers/commands/Join.h src/ChannelHandler.cpp headers/ChannelHandler.h src/commands/Privmsg.cpp headers/commands/Privmsg.h)
 
 include_directories(headers)
 set_property(TARGET ft_irc PROPERTY CXX_STANDARD 98)

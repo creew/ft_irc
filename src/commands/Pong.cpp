@@ -1,6 +1,6 @@
 #include "commands/Pong.h"
 
-bool Pong::run(IClient *client, InMessage *message) {
+bool Pong::run(Client *client, InMessage *message) {
     return false;
 }
 

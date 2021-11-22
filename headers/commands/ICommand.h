@@ -2,11 +2,12 @@
 #define FT_IRC_ICOMMAND_H
 
 #include <InMessage.h>
-#include <IClient.h>
+#include <Client.h>
 
+class Client;
 class ICommand {
 public:
-    virtual bool run(IClient *client, InMessage *message) = 0;
+    virtual bool run(Client *client, InMessage *message) = 0;
 
     virtual const char *getName() = 0;
 

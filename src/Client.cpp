@@ -1,15 +1,17 @@
 #include <cstring>
 #include <unistd.h>
 #include <iostream>
+#include <sys/socket.h>
 #include "Client.h"
 #include "StringUtils.h"
 
-Client::Client(int fd, IServer *server) :
+Client::Client(int fd, Server *server, ChannelHandler *channelHandler) :
         fd(fd),
         server(server),
         user(nullptr),
         nick(nullptr), recvBuf(),
-        recvBufLength(0), state() {
+        recvBufLength(0), state(),
+        channelHandler(channelHandler) {
 }
 
 Client::~Client() {
@@ -84,4 +86,35 @@ void Client::pushMessage(RawMessage *outMessage) {
 
 const char *Client::getHostName() {
     return "localhost";
+}
+
+void Client::sendMessages() {
+    if (!sendQueue.empty()) {
+        RawMessage *msg = sendQueue.at(0);
+        long r = send(this->getFd(), msg->getMessage(), msg->getLength(), 0);
+        if (r > 0) {
+            if (r == msg->getLength()) {
+                delete msg;
+                sendQueue.erase(sendQueue.begin());
+            } else {
+                msg->reduceLength(r);
+            }
+        }
+    }
+}
+
+int Client::getFd() const {
+    return fd;
+}
+
+char *Client::getUser() const {
+    return user;
+}
+
+char *Client::getNick() const {
+    return nick;
+}
+
+ChannelHandler *Client::getChannelHandler() const {
+    return channelHandler;
 }
