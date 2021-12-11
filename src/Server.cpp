@@ -90,7 +90,7 @@ void Server::startListen() {
                     cout << buf;
                     if (r == 0 || client->processData(buf, r)) {
                         cout << "  Disconnecting - " << polls[i].fd << endl;
-                        channelHandler->removeClientFromChannel(client);
+                        channelHandler->disconnectUserFromServer(client);
                         userHandler->removeClient(polls[i].fd);
                     }
                 }

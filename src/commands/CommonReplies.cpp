@@ -30,7 +30,7 @@ void CommonReplies::sendRplMyInfo(Client *client) {
     client->pushMessage(msg);
 }
 
-void CommonReplies::sendNotEnoughParameters(Client *client, const char *command) {
+void CommonReplies::sendNeedMoreParams(Client *client, const char *command) {
     RawMessage *msg = new RawMessage(":%s %03d %s :Not enough parameters",
                                      client->getHostName(), ERR_NEEDMOREPARAMS, command);
     client->pushMessage(msg);
@@ -45,5 +45,29 @@ void CommonReplies::sendNoTextToSend(Client *client) {
 void CommonReplies::sendNoRecipientGiven(Client *client, const char *command) {
     RawMessage *msg = new RawMessage(":%s %03d %s :No recipient given (%s)",
                                      client->getHostName(), ERR_NORECIPIENT, client->getNick(), command);
+    client->pushMessage(msg);
+}
+
+void CommonReplies::sendNoSuchChannel(Client *client, const char *channel) {
+    RawMessage *msg = new RawMessage(":%s %03d %s :No such channel",
+                                     client->getHostName(), ERR_NOSUCHCHANNEL, channel);
+    client->pushMessage(msg);
+}
+
+void CommonReplies::sendNotOnChannel(Client *client, const char *channel) {
+    RawMessage *msg = new RawMessage(":%s %03d %s :You're not on that channel",
+                                     client->getHostName(), ERR_NOTONCHANNEL, channel);
+    client->pushMessage(msg);
+}
+
+void CommonReplies::sendNotChannelOperator(Client *client, const char *channel) {
+    RawMessage *msg = new RawMessage(":%s %03d %s :You're not channel operator",
+                                     client->getHostName(), ERR_NOTONCHANNEL, channel);
+    client->pushMessage(msg);
+}
+
+void CommonReplies::sendNoSuchServer(Client *client, const char *channel) {
+    RawMessage *msg = new RawMessage(":%s %03d %s :No such server",
+                                     client->getHostName(), ERR_NOSUCHSERVER, channel);
     client->pushMessage(msg);
 }

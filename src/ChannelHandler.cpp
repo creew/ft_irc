@@ -14,8 +14,12 @@ bool ChannelHandler::joinChannel(Client *client, const string &name) {
     return channel->putUser(client);
 }
 
-void ChannelHandler::removeClientFromChannel(Client *client) {
+void ChannelHandler::disconnectUserFromServer(Client *client) {
     close(client->getFd());
+    removeClientFromChannel(client);
+}
+
+void ChannelHandler::removeClientFromChannel(Client *client) {
     for (vector<Channel *>::iterator ic = channels.begin(); ic != channels.end(); ic++) {
         Channel *channel = (*ic);
         channel->removeUser(client);
@@ -66,4 +70,14 @@ bool ChannelHandler::sendMessageToChannel(Client *clientFrom, string &channelTo,
                                      clientFrom->getNick(), channelTo.c_str());
     clientFrom->pushMessage(msg);
     return false;
+}
+
+Channel *ChannelHandler::findChannelByName(const string &channel) {
+    for (vector<Channel *>::iterator ic = channels.begin(); ic != channels.end(); ic++) {
+        Channel *ch = *ic;
+        if (ch->getName() == channel) {
+            return ch;
+        }
+    }
+    return NULL;
 }

@@ -18,6 +18,9 @@ public:
     bool joinChannel(Client *client, const string &name);
     void removeClientFromChannel(Client *client);
     bool sendMessageToChannel(Client *clientFrom, string &channel, string &message);
+    Channel *findChannelByName(const string &channel);
+
+    void disconnectUserFromServer(Client *client);
 };
 
 

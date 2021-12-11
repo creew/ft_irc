@@ -1,7 +1,3 @@
-//
-// Created by Алексей on 23.11.2021.
-//
-
 #ifndef FT_IRC_PRIVMSG_H
 #define FT_IRC_PRIVMSG_H
 

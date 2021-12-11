@@ -27,7 +27,7 @@ private:
     char state;
     Server *server;
     std::vector<RawMessage *> sendQueue;
-    bool isOp;
+    bool opMode;
     string ip;
 
 
@@ -58,6 +58,14 @@ public:
 
     const string &getIp() const {
         return ip;
+    }
+
+    bool isOpMode() const {
+        return opMode;
+    }
+
+    void setOpMode(bool opMode) {
+        Client::opMode = opMode;
     }
 
     void pushMessage(RawMessage *outMessage);

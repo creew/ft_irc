@@ -5,7 +5,7 @@
 
 bool Join::run(Client *client, InMessage *message) {
     if (message->getParams().empty()) {
-        CommonReplies::sendNotEnoughParameters(client, message->getCommand());
+        CommonReplies::sendNeedMoreParams(client, message->getCommand());
         return false;
     }
     string param = message->getParams().at(0);

@@ -1,7 +1,3 @@
-//
-// Created by Алексей on 21.11.2021.
-//
-
 #ifndef FT_IRC_JOIN_H
 #define FT_IRC_JOIN_H
 

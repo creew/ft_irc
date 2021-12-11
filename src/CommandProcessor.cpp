@@ -12,6 +12,8 @@
 #include "StringUtils.h"
 #include "CommandProcessor.h"
 #include "commands/Mode.h"
+#include "commands/Part.h"
+#include "commands/Topic.h"
 
 bool CommandProcessor::processAction(char *command, Client *client) {
     InMessage *message = new InMessage(command);
@@ -33,11 +35,13 @@ CommandProcessor::CommandProcessor() {
     commands.push_back(new List());
     commands.push_back(new Mode());
     commands.push_back(new Nick());
+    commands.push_back(new Part());
     commands.push_back(new Pass());
     commands.push_back(new Ping());
     commands.push_back(new Pong());
     commands.push_back(new Privmsg());
     commands.push_back(new Quit());
+    commands.push_back(new Topic());
     commands.push_back(new User());
 }
 
