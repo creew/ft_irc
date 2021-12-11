@@ -21,7 +21,12 @@ add_executable(ft_irc src/main.cpp
         src/commands/List.cpp headers/commands/List.h
         src/commands/Quit.cpp headers/commands/Quit.h
         src/commands/Pass.cpp headers/commands/Pass.h
-        src/commands/CommonReplies.cpp headers/commands/CommonReplies.h src/commands/Join.cpp headers/commands/Join.h src/ChannelHandler.cpp headers/ChannelHandler.h src/commands/Privmsg.cpp headers/commands/Privmsg.h)
+        src/commands/CommonReplies.cpp headers/commands/CommonReplies.h
+        src/commands/Join.cpp headers/commands/Join.h
+        src/ChannelHandler.cpp headers/ChannelHandler.h
+        src/commands/Privmsg.cpp headers/commands/Privmsg.h
+        src/UserHandler.cpp headers/UserHandler.h
+        src/commands/Mode.cpp headers/commands/Mode.h)
 
 include_directories(headers)
 set_property(TARGET ft_irc PROPERTY CXX_STANDARD 98)

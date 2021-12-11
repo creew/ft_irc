@@ -7,21 +7,24 @@
 using namespace std;
 
 class Client;
+
 class Channel {
 private:
     string name;
     string topic;
     vector<Client *> users;
-    bool operatorPrivileges;  //o
     bool privateChannel;  //p
     bool secretChannel;  //s
     bool inviteOnlyChannel;  //i
     bool topicSettable;  //t
     bool noMessagesOutside;  //n
-    bool banMask;  //b
-    bool abilityToSpeak;  //v
+    bool moderatedChannel;  //m
+    vector<Client *> ops;
+    vector<Client *> voiced;
 public:
-    explicit Channel(const string &name) : name(name) {}
+    explicit Channel(const string &name) : name(name), privateChannel(false), secretChannel(false),
+                                           inviteOnlyChannel(false),
+                                           topicSettable(true), noMessagesOutside(true), moderatedChannel(false) {}
 
     const string &getName() const {
         return name;
@@ -39,17 +42,15 @@ public:
 
     size_t usersCount();
 
+    bool isUserOnChannel(Client *client);
+
+    bool isUserOps(Client *client);
+
+    bool isUserVoiced(Client *client);
+
 
     void setTopic(const string &topic) {
         Channel::topic = topic;
-    }
-
-    bool isOperatorPrivileges() const {
-        return operatorPrivileges;
-    }
-
-    void setOperatorPrivileges(bool operatorPrivileges) {
-        Channel::operatorPrivileges = operatorPrivileges;
     }
 
     bool isPrivateChannel() const {
@@ -92,23 +93,17 @@ public:
         Channel::noMessagesOutside = noMessagesOutside;
     }
 
-    bool isBanMask() const {
-        return banMask;
+    bool isModeratedChannel() const {
+        return moderatedChannel;
     }
 
-    void setBanMask(bool banMask) {
-        Channel::banMask = banMask;
-    }
-
-    bool isAbilityToSpeak() const {
-        return abilityToSpeak;
-    }
-
-    void setAbilityToSpeak(bool abilityToSpeak) {
-        Channel::abilityToSpeak = abilityToSpeak;
+    void setModeratedChannel(bool moderatedChannel) {
+        Channel::moderatedChannel = moderatedChannel;
     }
 
     bool putUser(Client *pClient);
+
+    void addToOps(Client *client);
 };
 
 

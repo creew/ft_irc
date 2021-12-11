@@ -2,8 +2,15 @@
 #include "Server.h"
 #include "ServerConfiguration.h"
 
+char stopAll = 0;
+
+void intHandler(int dummy) {
+    stopAll = 1;
+}
+
 int main(int argc, char** argv) {
     Server *server = nullptr;
+    signal(SIGINT, intHandler);
     ServerConfiguration serverConfiguration;
     try {
         serverConfiguration.parseConfiguration(argc, argv);

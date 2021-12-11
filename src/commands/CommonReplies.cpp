@@ -38,6 +38,12 @@ void CommonReplies::sendNotEnoughParameters(Client *client, const char *command)
 
 void CommonReplies::sendNoTextToSend(Client *client) {
     RawMessage *msg = new RawMessage(":%s %03d %s :No text to send",
-                                     client->getHostName(), ERR_NOTEXTTOSEND);
+                                     client->getHostName(), ERR_NOTEXTTOSEND, client->getNick());
+    client->pushMessage(msg);
+}
+
+void CommonReplies::sendNoRecipientGiven(Client *client, const char *command) {
+    RawMessage *msg = new RawMessage(":%s %03d %s :No recipient given (%s)",
+                                     client->getHostName(), ERR_NORECIPIENT, client->getNick(), command);
     client->pushMessage(msg);
 }

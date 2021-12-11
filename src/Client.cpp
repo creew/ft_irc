@@ -5,13 +5,12 @@
 #include "Client.h"
 #include "StringUtils.h"
 
-Client::Client(int fd, Server *server, ChannelHandler *channelHandler) :
+Client::Client(int fd, Server *server, char *ip) :
         fd(fd),
         server(server),
         user(nullptr),
         nick(nullptr), recvBuf(),
-        recvBufLength(0), state(),
-        channelHandler(channelHandler) {
+        recvBufLength(0), state(), ip(ip) {
 }
 
 Client::~Client() {
@@ -116,5 +115,9 @@ char *Client::getNick() const {
 }
 
 ChannelHandler *Client::getChannelHandler() const {
-    return channelHandler;
+    return server->getChannelHandler();
+}
+
+UserHandler *Client::getUserHandler() const {
+    return server->getUserHandler();
 }

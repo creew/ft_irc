@@ -6,22 +6,29 @@
 #include <netdb.h>
 #include <sys/fcntl.h>
 #include <Client.h>
+#include <cerrno>
 #include "RawMessage.h"
+#include "UserHandler.h"
 
+extern char stopAll;
 void Server::start() {
     startListen();
 }
 
-Server::Server(ServerConfiguration *configuration) : configuration(configuration) {
-    this->client_socket = 0;
+Server::Server(ServerConfiguration *configuration) :
+        configuration(configuration),
+        run(false),
+        client_socket(0) {
     this->commandProcessor = new CommandProcessor();
     this->channelHandler = new ChannelHandler();
+    this->userHandler = new UserHandler();
 }
 
 Server::~Server() {
     cout << "hello from destructor" << endl;
     delete commandProcessor;
     delete channelHandler;
+    delete userHandler;
 }
 
 void Server::initRecvSocket() {
@@ -56,26 +63,8 @@ void Server::setSocketOptions(int socket) {
     }
 }
 
-int Server::initNetworkServer() {
-    struct sockaddr_in server_sockaddr;
-    int sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock == -1) {
-        throw std::invalid_argument("can't open socket");
-    }
-    setSocketOptions(sock);
-    server_sockaddr.sin_family = AF_INET;
-    Server::getRemoteAddr(&server_sockaddr, configuration->getHost());
-    server_sockaddr.sin_port = htons(configuration->getPortNetwork());
-    if (bind(sock, (struct sockaddr *) &server_sockaddr,
-             sizeof(server_sockaddr)) < 0) {
-        throw invalid_argument("ERROR on binding");
-    }
-    return sock;
-}
-
 void Server::startListen() {
     int totalFd;
-    //initNetworkServer();
     initRecvSocket();
     struct pollfd polls[100];
     run = true;
@@ -89,52 +78,48 @@ void Server::startListen() {
             throw invalid_argument("timeout excepted");
         }
         if (polls[0].revents) {
-            int new_sd;
-            do
-            {
-                new_sd = accept(polls[0].fd, nullptr, nullptr);
-                if (new_sd < 0) {
-                    if (errno != EWOULDBLOCK) {
-                        run = false;
-                    }
-                    break;
-                }
-                setSocketOptions(new_sd);
-                cout << "  New incoming connection - " << new_sd << std::endl;
-                Client *client = new Client(new_sd, this, channelHandler);
-                clients.push_back(client);
-            } while (new_sd != -1);
+            acceptNewConnection(polls);
         }
         for (int i = 1; i < totalFd; i++) {
             if (polls[i].revents & POLLIN) {
-                for (vector<Client *>::iterator client = clients.begin(); client != clients.end(); client++) {
+                Client *client = userHandler->findClientByFd(polls[i].fd);
+                if (client != NULL) {
                     char buf[1025];
-                    if ((*client)->getFd() == polls[i].fd) {
-                        size_t r = recv(polls[i].fd, buf, sizeof(buf) - 1, 0);
-                        buf[r] = '\0';
-                        if (r == 0) {
-                            cout << "  Disconnecting - " << polls[i].fd << endl;
-                            delete (*client);
-                            clients.erase(client--);
-                        } else {
-                            cout << buf;
-                            if ((*client)->processData(buf, r)) {
-                                channelHandler->removeClientFromChannel(*client);
-                                clients.erase(client--);
-                            }
-                        }
+                    size_t r = recv(polls[i].fd, buf, sizeof(buf) - 1, 0);
+                    buf[r] = '\0';
+                    cout << buf;
+                    if (r == 0 || client->processData(buf, r)) {
+                        cout << "  Disconnecting - " << polls[i].fd << endl;
+                        channelHandler->removeClientFromChannel(client);
+                        userHandler->removeClient(polls[i].fd);
                     }
                 }
             } else if (polls[i].revents & POLLOUT) {
-                for (vector<Client *>::iterator it = clients.begin(); it != clients.end(); it++) {
-                    Client *client = *it;
-                    if (client->getFd() == polls[i].fd) {
-                        client->sendMessages();
-                    }
-                }
+                userHandler->sendMessages(polls[i].fd);
             }
         }
-    }  while (run);
+    }  while (run && !stopAll);
+}
+
+void Server::acceptNewConnection(const pollfd *polls) {
+    int fd;
+    struct sockaddr_in sockaddrIn;
+    do
+    {
+        socklen_t socklen = sizeof (sockaddrIn);
+        fd = accept(polls[0].fd, (struct sockaddr *) &sockaddrIn, &socklen);
+        if (fd < 0) {
+            if (errno != EWOULDBLOCK) {
+                run = false;
+            }
+            break;
+        }
+        setSocketOptions(fd);
+        cout << "  New incoming connection - " << fd << endl;
+        char *ip = inet_ntoa(sockaddrIn.sin_addr);
+        Client *client = new Client(fd, this, ip);
+        userHandler->joinUser(client);
+    } while (fd != -1);
 }
 
 void Server::getRemoteAddr(struct sockaddr_in *sockaddrIn, const string& addr) {
@@ -149,26 +134,6 @@ int Server::fillPoll(struct pollfd *polls, int maxSize) {
     int i = 0;
     polls[i].fd = client_socket;
     polls[i++].events = POLLIN | POLLOUT;
-    for (vector<Client *>::iterator it = clients.begin(); it != clients.end(); it++) {
-        if (i < maxSize) {
-            polls[i].fd = (*it)->getFd();
-            polls[i++].events = POLLIN | POLLOUT;
-        } else {
-            cerr << "Maximum number of clients reached";
-            break;
-        }
-    }
+    i += userHandler->fillPoll(polls + i, maxSize - i, POLLIN | POLLOUT);
     return i;
-}
-
-vector<Client *> &Server::getClients() {
-    return clients;
-}
-
-CommandProcessor *Server::getCommandProcessor() const {
-    return commandProcessor;
-}
-
-const ServerConfiguration *Server::getConfiguration() const {
-    return configuration;
 }

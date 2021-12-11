@@ -3,13 +3,13 @@
 
 #include <string>
 #include "Client.h"
+#include "Errors.h"
 
 using namespace std;
 
 class ChannelHandler {
 private:
     vector<Channel *> channels;
-    bool putUserToChannel(Client *client, const Channel *channel);
 public:
     virtual ~ChannelHandler();
 
@@ -17,6 +17,7 @@ public:
 
     bool joinChannel(Client *client, const string &name);
     void removeClientFromChannel(Client *client);
+    bool sendMessageToChannel(Client *clientFrom, string &channel, string &message);
 };
 
 

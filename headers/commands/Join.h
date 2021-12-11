@@ -12,7 +12,7 @@ class Join : public ICommand{
 
     const char *getName();
 private:
-
+    void joinChannel(Client *client, const string &channel) const;
 };
 
 #endif //FT_IRC_JOIN_H

@@ -6,6 +6,7 @@
 #include "RawMessage.h"
 #include "Server.h"
 #include "Client.h"
+#include "UserHandler.h"
 
 enum ClientState {
     BODY,
@@ -14,6 +15,7 @@ enum ClientState {
 };
 
 class ChannelHandler;
+class UserHandler;
 class Server;
 class Client {
 private:
@@ -24,20 +26,26 @@ private:
     int recvBufLength;
     char state;
     Server *server;
-    ChannelHandler *channelHandler;
     std::vector<RawMessage *> sendQueue;
+    bool isOp;
+    string ip;
+
 
     bool processCommand(char *buf);
 
 public:
     int getFd() const;
 
-    ChannelHandler *getChannelHandler() const;
-
-    Client(int fd, Server *server, ChannelHandler *channelHandler);
+    Client(int fd, Server *server, char *ip);
 
     virtual ~Client();
+
+
+    /**
+     * Returns true if need to disconnect user
+     */
     bool processData(const char *data, size_t length);
+
     const char *getServerPassword();
 
     void setNick(const char *string);
@@ -48,11 +56,19 @@ public:
 
     char *getNick() const;
 
+    const string &getIp() const {
+        return ip;
+    }
+
     void pushMessage(RawMessage *outMessage);
 
     const char *getHostName();
 
     void sendMessages();
+
+    ChannelHandler *getChannelHandler() const;
+
+    UserHandler *getUserHandler() const;
 };
 
 
