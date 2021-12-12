@@ -1,7 +1,5 @@
-
 #include <cstdio>
 #include <Channel.h>
-
 
 void Channel::removeUser(Client *user) {
     for (vector<Client *>::iterator iu = users.begin(); iu != users.end(); iu++) {

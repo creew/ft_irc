@@ -1,7 +1,7 @@
 #ifndef FT_IRC_ICOMMAND_H
 #define FT_IRC_ICOMMAND_H
 
-#include <InMessage.h>
+#include "messages/InMessage.h"
 #include <Client.h>
 
 class Client;

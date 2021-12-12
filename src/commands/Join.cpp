@@ -2,6 +2,8 @@
 #include <iostream>
 #include "commands/Join.h"
 #include "ChannelHandler.h"
+#include "messages/ClientRawMessage.h"
+#include "commands/Names.h"
 
 bool Join::run(Client *client, InMessage *message) {
     if (message->getParams().empty()) {
@@ -24,9 +26,9 @@ bool Join::run(Client *client, InMessage *message) {
 
 void Join::joinChannel(Client *client, const string &channel) const {
     if (client->getChannelHandler()->joinChannel(client, channel)) {
-        RawMessage *msg = new RawMessage(":%s!%s@%s JOIN :%s", client->getNick(), client->getUser(),
-                                         client->getIp().c_str(), channel.c_str());
+        RawMessage *msg = new ClientRawMessage(client, "JOIN :%s", channel.c_str());
         client->pushMessage(msg);
+        Names::sendChannelUsers(client, channel);
     }
 }
 

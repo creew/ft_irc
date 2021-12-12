@@ -1,6 +1,7 @@
 #include <iostream>
 #include "commands/Part.h"
 #include "commands/CommonReplies.h"
+#include "messages/ClientRawMessage.h"
 
 bool Part::run(Client *client, InMessage *message) {
     if (message->getParams().empty() || message->getParams().at(0).empty()) {
@@ -28,15 +29,14 @@ bool Part::run(Client *client, InMessage *message) {
 void Part::partChannel(Client *client, const string &channel, const string &umsg) {
     Channel * ch = client->getChannelHandler()->findChannelByName(channel);
     if (ch == NULL) {
-        CommonReplies::sendNoSuchChannel(client, channel.c_str());
+        CommonReplies::sendNoSuchChannel(client, channel);
     } else {
         Client *cl = client->getUserHandler()->findClientByFd(client->getFd());
         if (cl == NULL) {
-            CommonReplies::sendNotOnChannel(client, channel.c_str());
+            CommonReplies::sendNotOnChannel(client, channel);
         } else {
             client->getChannelHandler()->removeClientFromChannel(client);
-            RawMessage *msg = new RawMessage(":%s!%s@%s PART %s :%s", client->getNick(), client->getUser(),
-                                             client->getIp().c_str(), channel.c_str(), umsg.c_str());
+            RawMessage *msg = new ClientRawMessage(client, "PART %s :%s", channel.c_str(), umsg.c_str());
             client->pushMessage(msg);
         }
     }

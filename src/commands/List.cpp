@@ -1,5 +1,5 @@
 #include <Errors.h>
-#include <RawMessage.h>
+#include "messages/RawMessage.h"
 #include "commands/List.h"
 
 bool List::run(Client *client, InMessage *message) {
@@ -12,7 +12,7 @@ const char *List::getName() {
 }
 
 void List::sendRplListStart(Client *client) {
-    RawMessage *msg = new RawMessage(":%s %03d %s Channel :Users  Name", client->getHostName(), RPL_LISTSTART, client->getNick());
+    RawMessage *msg = new RawMessage(":%s %03d %s Channel :Users  Name", client->getHostName(), RPL_LISTSTART, client->getNick().c_str());
     client->pushMessage(msg);
     sendRplList(client);
 }
@@ -20,7 +20,7 @@ void List::sendRplListStart(Client *client) {
 void List::sendRplList(Client *client) {
     vector<Channel *> channels = client->getChannelHandler()->getChannels();
     for (std::vector<Channel *>::iterator ic = channels.begin(); ic != channels.end(); ic++) {
-        RawMessage *msg = new RawMessage(":%s %03d %s %s %d :%s", client->getHostName(), RPL_LIST, client->getNick(),
+        RawMessage *msg = new RawMessage(":%s %03d %s %s %d :%s", client->getHostName(), RPL_LIST, client->getNick().c_str(),
                                          (*ic)->getName().c_str(), (*ic)->usersCount(), (*ic)->getTopic().c_str());
         client->pushMessage(msg);
     }
@@ -28,6 +28,6 @@ void List::sendRplList(Client *client) {
 }
 
 void List::sendRplEnd(Client *client) {
-    RawMessage *msg = new RawMessage(":%s %03d %s :End of /LIST", client->getHostName(), RPL_LISTEND, client->getNick());
+    RawMessage *msg = new RawMessage(":%s %03d %s :End of /LIST", client->getHostName(), RPL_LISTEND, client->getNick().c_str());
     client->pushMessage(msg);
 }

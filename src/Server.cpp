@@ -7,7 +7,7 @@
 #include <sys/fcntl.h>
 #include <Client.h>
 #include <cerrno>
-#include "RawMessage.h"
+#include "messages/RawMessage.h"
 #include "UserHandler.h"
 
 extern char stopAll;
@@ -103,6 +103,7 @@ void Server::startListen() {
 
 void Server::acceptNewConnection(const pollfd *polls) {
     int fd;
+    struct hostent *hp;
     struct sockaddr_in sockaddrIn;
     do
     {
@@ -116,18 +117,15 @@ void Server::acceptNewConnection(const pollfd *polls) {
         }
         setSocketOptions(fd);
         cout << "  New incoming connection - " << fd << endl;
-        char *ip = inet_ntoa(sockaddrIn.sin_addr);
+        char *ip;
+        if ((hp = gethostbyaddr(&sockaddrIn, socklen, AF_INET)) == NULL) {
+            ip = inet_ntoa(sockaddrIn.sin_addr);
+        } else {
+            ip = hp->h_name;
+        }
         Client *client = new Client(fd, this, ip);
         userHandler->joinUser(client);
     } while (fd != -1);
-}
-
-void Server::getRemoteAddr(struct sockaddr_in *sockaddrIn, const string& addr) {
-    struct hostent *host = gethostbyname(addr.c_str());
-    if (host == nullptr) {
-        throw invalid_argument("can't get host by addr");
-    }
-    memmove(&(sockaddrIn->sin_addr.s_addr), host->h_addr_list[0], 4);
 }
 
 int Server::fillPoll(struct pollfd *polls, int maxSize) {

@@ -8,6 +8,9 @@ bool Who::run(Client *client, InMessage *message) {
     }
     string param = message->getParams().at(0);
     Channel *channel = client->getChannelHandler()->findChannelByName(param);
+    if (channel == NULL) {
+
+    }
 
     RawMessage *msg = new RawMessage(":%s %03d %s :No topic is set", client->getHostName(), RPL_WHOREPLY, channel);
     client->pushMessage(msg);

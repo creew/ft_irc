@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include "ChannelHandler.h"
+#include "messages/ClientRawMessage.h"
 
 bool ChannelHandler::joinChannel(Client *client, const string &name) {
     for (vector<Channel *>::iterator ic = channels.begin(); ic != channels.end(); ic++) {
@@ -48,7 +49,7 @@ bool ChannelHandler::sendMessageToChannel(Client *clientFrom, string &channelTo,
             (channel->isModeratedChannel() &&
              (!channel->isUserOps(clientFrom) && !channel->isUserVoiced(clientFrom)))) {
             RawMessage *msg = new RawMessage(":%s %03d %s %s :Cannot send to channel", clientFrom->getHostName(),
-                                             ERR_CANNOTSENDTOCHAN, clientFrom->getNick(), channelTo.c_str());
+                                             ERR_CANNOTSENDTOCHAN, clientFrom->getNick().c_str(), channelTo.c_str());
             clientFrom->pushMessage(msg);
             return false;
 
@@ -58,8 +59,7 @@ bool ChannelHandler::sendMessageToChannel(Client *clientFrom, string &channelTo,
             for (vector<Client *>::iterator iu = users.begin(); iu != users.end(); iu++) {
                 Client *client = (*iu);
                 if (client != clientFrom) {
-                    RawMessage *msg = new RawMessage(":%s!%s@%s PRIVMSG %s :%s", clientFrom->getNick(),
-                                                     clientFrom->getUser(), clientFrom->getIp().c_str(), channelTo.c_str(), message.c_str());
+                    RawMessage *msg = new ClientRawMessage(client, "PRIVMSG %s :%s", channelTo.c_str(), message.c_str());
                     client->pushMessage(msg);
                 }
             }
@@ -67,7 +67,7 @@ bool ChannelHandler::sendMessageToChannel(Client *clientFrom, string &channelTo,
         }
     }
     RawMessage *msg = new RawMessage(":%s %03d %s %s :No such channel", clientFrom->getHostName(), ERR_NOSUCHCHANNEL,
-                                     clientFrom->getNick(), channelTo.c_str());
+                                     clientFrom->getNick().c_str(), channelTo.c_str());
     clientFrom->pushMessage(msg);
     return false;
 }

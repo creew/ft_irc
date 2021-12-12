@@ -28,8 +28,8 @@ private:
     int fillPoll(struct pollfd *polls, int maxSize);
     void initRecvSocket();
     void startListen();
-    static static void setSocketOptions(int socket);
-    static void getRemoteAddr(sockaddr_in *sockaddrIn, const std::string &addr);
+    static void setSocketOptions(int socket);
+    void acceptNewConnection(const pollfd *polls);
 public:
     virtual ~Server();
 
@@ -52,8 +52,6 @@ public:
     UserHandler *getUserHandler() const {
         return userHandler;
     }
-
-    void acceptNewConnection(const pollfd *polls);
 };
 
 

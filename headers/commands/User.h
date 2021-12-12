@@ -9,7 +9,7 @@ class User : public ICommand {
     const char *getName();
 
 private:
-    void sendErrNeedMoreParams(Client *client, const char *command);
+    void sendErrNeedMoreParams(Client *client, const string &command);
 };
 
 #endif //FT_IRC_USER_H

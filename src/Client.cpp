@@ -5,21 +5,16 @@
 #include "Client.h"
 #include "StringUtils.h"
 
-Client::Client(int fd, Server *server, char *ip) :
-        fd(fd),
-        server(server),
-        user(nullptr),
-        nick(nullptr), recvBuf(),
-        recvBufLength(0), state(), ip(ip) {
+Client::Client(int fd, Server *server, char *host) :
+        fd(fd), server(server), opMode(false), recvBuf(),
+        recvBufLength(0), state(), host(host) {
 }
 
 Client::~Client() {
     close(this->fd);
-    delete(this->user);
-    delete(this->nick);
-    for (std::vector<RawMessage *>::iterator it = sendQueue.begin(); it != sendQueue.end(); it++) {
-        delete (*it);
-        sendQueue.erase(it--);
+    while (!sendQueue.empty()) {
+        delete(sendQueue.front());
+        sendQueue.pop();
     }
 }
 
@@ -54,6 +49,7 @@ bool Client::processData(const char *data, size_t length) {
                     this->recvBufLength = 0;
                 }
                 this->state = BODY;
+                break;
         }
     }
     return false;
@@ -63,24 +59,12 @@ bool Client::processCommand(char *buf) {
     return server->getCommandProcessor()->processAction(buf, this);
 }
 
-const char *Client::getServerPassword() {
-    const ServerConfiguration *configuration = this->server->getConfiguration();
-    if (configuration) {
-        return configuration->getPassword().c_str();
-    }
-    return nullptr;
-}
-
-void Client::setUser(const char *user) {
-    this->user = StringUtils::duplicateString(user);
-}
-
-void Client::setNick(const char *nick) {
-    this->nick = StringUtils::duplicateString(nick);
+const string &Client::getServerPassword() {
+    return server->getConfiguration()->getPassword();
 }
 
 void Client::pushMessage(RawMessage *outMessage) {
-    sendQueue.push_back(outMessage);
+    sendQueue.push(outMessage);
 }
 
 const char *Client::getHostName() {
@@ -89,12 +73,12 @@ const char *Client::getHostName() {
 
 void Client::sendMessages() {
     if (!sendQueue.empty()) {
-        RawMessage *msg = sendQueue.at(0);
+        RawMessage *msg = sendQueue.front();
         long r = send(this->getFd(), msg->getMessage(), msg->getLength(), 0);
         if (r > 0) {
             if (r == msg->getLength()) {
                 delete msg;
-                sendQueue.erase(sendQueue.begin());
+                sendQueue.pop();
             } else {
                 msg->reduceLength(r);
             }
@@ -104,14 +88,6 @@ void Client::sendMessages() {
 
 int Client::getFd() const {
     return fd;
-}
-
-char *Client::getUser() const {
-    return user;
-}
-
-char *Client::getNick() const {
-    return nick;
 }
 
 ChannelHandler *Client::getChannelHandler() const {

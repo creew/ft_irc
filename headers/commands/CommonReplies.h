@@ -11,16 +11,16 @@ public:
     static void sendRplYourHost(Client *client);
     static void sendRplCreated(Client *client);
     static void sendRplMyInfo(Client *client);
-    static void sendNeedMoreParams(Client *client, const char *command);
-    static void sendNoRecipientGiven(Client *client, const char *command);
+    static void sendNeedMoreParams(Client *client, const string &command);
+    static void sendNoRecipientGiven(Client *client, const string &command);
     static void sendNoTextToSend(Client *client);
-    static void sendNoSuchChannel(Client *client, const char *channel);
+    static void sendNoSuchChannel(Client *client, const string &channel);
 
-    static void sendNotOnChannel(Client *client, const char *channel);
+    static void sendNotOnChannel(Client *client, const string &channel);
 
-    static void sendNotChannelOperator(Client *client, const char *channel);
+    static void sendNotChannelOperator(Client *client, const string &channel);
 
-    static void sendNoSuchServer(Client *client, const char *channel);
+    static void sendNoSuchServer(Client *client, const string &channel);
 };
 
 

@@ -17,7 +17,6 @@ public:
     static bool isEmpty(const char *s);
     static char toUpper(char c);
     static int strcmpNoCase(const char *s1, const char *s2);
-
     static void splitMessage(vector<string> &words, const char *message);
 };
 

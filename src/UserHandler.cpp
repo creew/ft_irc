@@ -1,5 +1,6 @@
 #include <iostream>
 #include "UserHandler.h"
+#include "messages/ClientRawMessage.h"
 
 UserHandler::~UserHandler() {
     for (vector<Client *>::iterator ic = clients.begin(); ic != clients.end(); ic++) {
@@ -32,9 +33,10 @@ void UserHandler::removeClient(int fd) {
 }
 
 void UserHandler::sendMessages(int fd) {
-    for (vector<Client *>::iterator client = clients.begin(); client != clients.end(); client++) {
-        if ((*client)->getFd() == fd) {
-            (*client)->sendMessages();
+    for (vector<Client *>::iterator ic = clients.begin(); ic != clients.end(); ic++) {
+        Client *client = *ic;
+        if (client->getFd() == fd) {
+            client->sendMessages();
         }
     }
 }
@@ -56,11 +58,10 @@ bool UserHandler::sendMessageToUser(Client *clientFrom, string &user, string &me
     for (vector<Client *>::iterator it = clients.begin(); it != clients.end(); it++) {
         Client *clientTo = *it;
         if (user == clientTo->getNick()) {
-            RawMessage *msg = new RawMessage(":%s!%s@%s PRIVMSG %s :%s", clientFrom->getNick(), clientFrom->getUser(),
-                                             clientFrom->getIp().c_str(), user.c_str(), message.c_str());
+            RawMessage *msg = new ClientRawMessage(clientFrom, "PRIVMSG %s :%s", user.c_str(), message.c_str());
             clientTo->pushMessage(msg);
             return true;
         }
     }
-
+    return false;
 }

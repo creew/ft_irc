@@ -1,5 +1,5 @@
 #include <Errors.h>
-#include <RawMessage.h>
+#include "messages/RawMessage.h"
 #include "commands/User.h"
 #include "commands/CommonReplies.h"
 
@@ -9,8 +9,9 @@ bool User::run(Client *client, InMessage *message) {
         sendErrNeedMoreParams(client, message->getCommand());
         return false;
     }
-    client->setUser(params.at(0).c_str());
-    if (client->getNick()) {
+    client->setUser(params.at(0));
+    client->setRealName(params.at(3));
+    if (!client->getNick().empty()) {
         CommonReplies::sendRplWelcome(client);
     }
     return false;
@@ -20,8 +21,8 @@ const char *User::getName() {
     return "USER";
 }
 
-void User::sendErrNeedMoreParams(Client *client, const char *command) {
+void User::sendErrNeedMoreParams(Client *client, const string& command) {
     RawMessage *msg = new RawMessage(":%s %03d %s %s :Not enough parameters", client->getHostName(),
-                                     ERR_NEEDMOREPARAMS, client->getNick(), command);
+                                     ERR_NEEDMOREPARAMS, client->getNick().c_str(), command.c_str());
     client->pushMessage(msg);
 }

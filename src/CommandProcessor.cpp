@@ -1,4 +1,3 @@
-#include <stdexcept>
 #include <iostream>
 #include "commands/Join.h"
 #include "commands/Ping.h"
@@ -14,12 +13,14 @@
 #include "commands/Mode.h"
 #include "commands/Part.h"
 #include "commands/Topic.h"
+#include "commands/Who.h"
+#include "commands/Names.h"
 
 bool CommandProcessor::processAction(char *command, Client *client) {
     InMessage *message = new InMessage(command);
-    if (message->getCommand() != NULL) {
+    if (!message->getCommand().empty()) {
         for (vector<ICommand *>::iterator ic = commands.begin(); ic != commands.end(); ic++) {
-            if (StringUtils::strcmpNoCase((*ic)->getName(), message->getCommand()) == 0) {
+            if (StringUtils::strcmpNoCase((*ic)->getName(), message->getCommand().c_str()) == 0) {
                 return (*ic)->run(client, message);
             }
         }
@@ -34,6 +35,7 @@ CommandProcessor::CommandProcessor() {
     commands.push_back(new Join());
     commands.push_back(new List());
     commands.push_back(new Mode());
+    commands.push_back(new Names());
     commands.push_back(new Nick());
     commands.push_back(new Part());
     commands.push_back(new Pass());
@@ -43,6 +45,7 @@ CommandProcessor::CommandProcessor() {
     commands.push_back(new Quit());
     commands.push_back(new Topic());
     commands.push_back(new User());
+    commands.push_back(new Who());
 }
 
 CommandProcessor::~CommandProcessor() {

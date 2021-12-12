@@ -12,13 +12,9 @@ bool Privmsg::run(Client *client, InMessage *message) {
     }
     string to = message->getParams().at(0);
     string msg = message->getParams().at(1);
-    if (to.at(0) == '#') {
+    if (to.at(0) == '#' || to.at(0) == '&') {
         client->getChannelHandler()->sendMessageToChannel(client, to, msg);
-    }
-    else if (to.at(0) == '$') {
-
-    }
-    else {
+    } else {
         client->getUserHandler()->sendMessageToUser(client, to, msg);
     }
     return false;

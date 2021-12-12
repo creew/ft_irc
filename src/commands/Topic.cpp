@@ -1,5 +1,6 @@
 #include "commands/Topic.h"
 #include "commands/CommonReplies.h"
+#include "messages/ClientRawMessage.h"
 
 bool Topic::run(Client *client, InMessage *message) {
     if (message->getParams().empty() || message->getParams().at(0).empty()) {
@@ -14,11 +15,10 @@ bool Topic::run(Client *client, InMessage *message) {
     }
     if (message->getParams().size() > 1) {
         if (!channel->isTopicSettable()) {
-            CommonReplies::sendNotChannelOperator(client, channelName.c_str());
+            CommonReplies::sendNotChannelOperator(client, channelName);
         } else {
             string topic = message->getParams().at(1);
-            RawMessage *msg = new RawMessage(":%s!%s@%s TOPIC %s :%s", client->getNick(), client->getUser(),
-                                             client->getIp().c_str(), channelName.c_str(), topic.c_str());
+            RawMessage *msg = new ClientRawMessage(client, "TOPIC %s :%s", channelName.c_str(), topic.c_str());
             client->pushMessage(msg);
         }
     } else {

@@ -1,7 +1,8 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
-#include "RawMessage.h"
+#include "messages/RawMessage.h"
+#include "Client.h"
 
 RawMessage::RawMessage(const char *format...) {
     va_list args, copy_args;
@@ -15,10 +16,7 @@ RawMessage::RawMessage(const char *format...) {
     va_end(args);
 }
 
-RawMessage::RawMessage(size_t length, const char *buf) : length(length) {
-    this->message = new char[length];
-    memcpy(this->message, buf, length);
-}
+RawMessage::RawMessage() : message(nullptr), length(0) {}
 
 RawMessage::~RawMessage() {
     delete this->message;

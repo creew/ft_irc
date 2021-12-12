@@ -9,9 +9,9 @@ add_executable(ft_irc src/main.cpp
         src/CommandProcessor.cpp headers/CommandProcessor.h
         src/Client.cpp headers/Client.h
         src/StringUtils.cpp headers/StringUtils.h
-        src/InMessage.cpp headers/InMessage.h
+        src/messages/InMessage.cpp headers/messages/InMessage.h
         headers/Errors.h
-        src/RawMessage.cpp headers/RawMessage.h
+        src/messages/RawMessage.cpp headers/messages/RawMessage.h
         src/Channel.cpp headers/Channel.h
         headers/commands/ICommand.h
         src/commands/User.cpp headers/commands/User.h
@@ -26,7 +26,7 @@ add_executable(ft_irc src/main.cpp
         src/ChannelHandler.cpp headers/ChannelHandler.h
         src/commands/Privmsg.cpp headers/commands/Privmsg.h
         src/UserHandler.cpp headers/UserHandler.h
-        src/commands/Mode.cpp headers/commands/Mode.h src/commands/Part.cpp headers/commands/Part.h src/commands/Topic.cpp headers/commands/Topic.h src/commands/Who.cpp headers/commands/Who.h)
+        src/commands/Mode.cpp headers/commands/Mode.h src/commands/Part.cpp headers/commands/Part.h src/commands/Topic.cpp headers/commands/Topic.h src/commands/Who.cpp headers/commands/Who.h src/messages/ClientRawMessage.cpp headers/messages/ClientRawMessage.h src/commands/Names.cpp headers/commands/Names.h src/messages/ServerRawMessage.cpp headers/messages/ServerRawMessage.h)
 
 include_directories(headers)
 set_property(TARGET ft_irc PROPERTY CXX_STANDARD 98)

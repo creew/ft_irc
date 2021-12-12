@@ -2,8 +2,9 @@
 #define FT_IRC_CLIENT_H
 
 #include <vector>
+#include <queue>
 #include "ServerConfiguration.h"
-#include "RawMessage.h"
+#include "messages/RawMessage.h"
 #include "Server.h"
 #include "Client.h"
 #include "UserHandler.h"
@@ -20,23 +21,22 @@ class Server;
 class Client {
 private:
     int fd;
-    char *user;
-    char *nick;
+    string user;
+    string nick;
+    string realName;
+    string host;
     char recvBuf[512];
     int recvBufLength;
     char state;
     Server *server;
-    std::vector<RawMessage *> sendQueue;
+    std::queue<RawMessage *> sendQueue;
     bool opMode;
-    string ip;
-
-
     bool processCommand(char *buf);
 
 public:
     int getFd() const;
 
-    Client(int fd, Server *server, char *ip);
+    Client(int fd, Server *server, char *host);
 
     virtual ~Client();
 
@@ -46,18 +46,34 @@ public:
      */
     bool processData(const char *data, size_t length);
 
-    const char *getServerPassword();
+    const string & getServerPassword();
 
-    void setNick(const char *string);
+    const string &getUser() const {
+        return user;
+    }
 
-    void setUser(const char *user);
+    void setUser(const string &user) {
+        Client::user = user;
+    }
 
-    char *getUser() const;
+    const string &getNick() const {
+        return nick;
+    }
 
-    char *getNick() const;
+    void setNick(const string &nick) {
+        Client::nick = nick;
+    }
 
-    const string &getIp() const {
-        return ip;
+    const string &getHost() const {
+        return host;
+    }
+
+    const string &getRealName() const {
+        return realName;
+    }
+
+    void setRealName(const string &realName) {
+        Client::realName = realName;
     }
 
     bool isOpMode() const {

@@ -2,14 +2,15 @@
 #define FT_IRC_RAWMESSAGE_H
 
 #include <cstddef>
+
 class RawMessage {
-private:
+protected:
     char *message;
     int length;
 public:
     RawMessage(const char *format, ...);
 
-    RawMessage(size_t length, const char *buf);
+    RawMessage();
 
     virtual ~RawMessage();
 
