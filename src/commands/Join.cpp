@@ -4,6 +4,7 @@
 #include "ChannelHandler.h"
 #include "messages/ClientRawMessage.h"
 #include "commands/Names.h"
+#include "commands/Nick.h"
 
 bool Join::run(Client *client, InMessage *message) {
     if (message->getParams().empty()) {
@@ -27,7 +28,7 @@ bool Join::run(Client *client, InMessage *message) {
 void Join::joinChannel(Client *client, const string &channel) const {
     if (client->getChannelHandler()->joinChannel(client, channel)) {
         RawMessage *msg = new ClientRawMessage(client, "JOIN :%s", channel.c_str());
-        client->pushMessage(msg);
+        CommonReplies::sendAllChannelUsers(client, channel, msg);
         Names::sendChannelUsers(client, channel);
     }
 }

@@ -1,7 +1,7 @@
 
 #include "messages/ClientRawMessage.h"
 
-ClientRawMessage::ClientRawMessage(Client *client, const char *format...) {
+ClientRawMessage::ClientRawMessage(Client *client, const char *format...) : RawMessage() {
     int prefixLength, bodyLength;
     va_list args, copy_args;
     va_start(args, format);

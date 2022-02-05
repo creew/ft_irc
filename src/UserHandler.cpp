@@ -65,3 +65,13 @@ bool UserHandler::sendMessageToUser(Client *clientFrom, string &user, string &me
     }
     return false;
 }
+
+Client *UserHandler::findClientByNick(string &nick) {
+    for (vector<Client *>::iterator it = clients.begin(); it != clients.end(); it++) {
+        Client *clientTo = *it;
+        if (nick == clientTo->getNick()) {
+            return clientTo;
+        }
+    }
+    return NULL;
+}

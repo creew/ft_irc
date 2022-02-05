@@ -12,7 +12,7 @@ bool Privmsg::run(Client *client, InMessage *message) {
     }
     string to = message->getParams().at(0);
     string msg = message->getParams().at(1);
-    if (to.at(0) == '#' || to.at(0) == '&') {
+    if (isChannel(to)) {
         client->getChannelHandler()->sendMessageToChannel(client, to, msg);
     } else {
         client->getUserHandler()->sendMessageToUser(client, to, msg);

@@ -3,13 +3,11 @@
 #include "messages/ClientRawMessage.h"
 
 bool ChannelHandler::joinChannel(Client *client, const string &name) {
-    for (vector<Channel *>::iterator ic = channels.begin(); ic != channels.end(); ic++) {
-        Channel *channel = (*ic);
-        if (channel->getName() == name) {
-            return channel->putUser(client);
-        }
+    Channel *channel = findChannelByName(name);
+    if (channel != NULL) {
+        return channel->putUser(client);
     }
-    Channel *channel = new Channel(name);
+    channel = new Channel(name);
     channels.push_back(channel);
     channel->addToOps(client);
     return channel->putUser(client);
@@ -59,7 +57,7 @@ bool ChannelHandler::sendMessageToChannel(Client *clientFrom, string &channelTo,
             for (vector<Client *>::iterator iu = users.begin(); iu != users.end(); iu++) {
                 Client *client = (*iu);
                 if (client != clientFrom) {
-                    RawMessage *msg = new ClientRawMessage(client, "PRIVMSG %s :%s", channelTo.c_str(), message.c_str());
+                    RawMessage *msg = new ClientRawMessage(clientFrom, "PRIVMSG %s :%s", channelTo.c_str(), message.c_str());
                     client->pushMessage(msg);
                 }
             }

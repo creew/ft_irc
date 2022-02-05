@@ -1,6 +1,6 @@
 #include "messages/ServerRawMessage.h"
 
-ServerRawMessage::ServerRawMessage(const char *format, ...) : RawMessage(format) {
+ServerRawMessage::ServerRawMessage(const char *format, ...) : RawMessage() {
     int bodyLength;
     char *buf;
     va_list args, copy_args;

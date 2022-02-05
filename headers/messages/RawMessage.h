@@ -23,6 +23,8 @@ public:
     }
 
     void reduceLength(long reduce);
+
+    RawMessage *clone();
 };
 
 

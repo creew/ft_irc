@@ -27,3 +27,11 @@ void RawMessage::reduceLength(long reduce) {
     this->length = this->length - reduce;
 }
 
+RawMessage *RawMessage::clone() {
+    RawMessage *clone = new RawMessage();
+    clone->message = new char[this->length + 1];
+    strcpy(clone->message, this->message);
+    clone->length = this->length;
+    return clone;
+}
+

@@ -7,7 +7,7 @@
 
 Client::Client(int fd, Server *server, char *host) :
         fd(fd), server(server), opMode(false), recvBuf(),
-        recvBufLength(0), state(), host(host) {
+        recvBufLength(0), state(), host(host), registered(false) {
 }
 
 Client::~Client() {
@@ -96,4 +96,12 @@ ChannelHandler *Client::getChannelHandler() const {
 
 UserHandler *Client::getUserHandler() const {
     return server->getUserHandler();
+}
+
+bool Client::operator==(const Client &rhs) const {
+    return nick == rhs.nick;
+}
+
+bool Client::operator!=(const Client &rhs) const {
+    return !(rhs == *this);
 }

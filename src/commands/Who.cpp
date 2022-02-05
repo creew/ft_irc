@@ -8,14 +8,19 @@ bool Who::run(Client *client, InMessage *message) {
     }
     string param = message->getParams().at(0);
     Channel *channel = client->getChannelHandler()->findChannelByName(param);
-    if (channel == NULL) {
-
+    if (channel != NULL) {
+        vector<Client *> users = channel->getUsers();
+        for (std::vector<Client *>::iterator ic = users.begin(); ic != users.end(); ic++) {
+            Client *cl = *ic;
+            // irc.ircnet.su 352 tre #hh kvirc 195.133.239.83 irc.ircnet.su asa H :0 KVIrc 5.0.0 Aria http://kvirc.net/
+            RawMessage *msg = new RawMessage(":%s %03d %s %s %s %s %s %s H :0 %s", client->getHostName(), RPL_WHOREPLY,
+                                             client->getNick().c_str(), param.c_str(), cl->getUser().c_str(), cl->getHost().c_str(),
+                                             cl->getHostName(), cl->getNick().c_str(), cl->getRealName().c_str());
+            client->pushMessage(msg);
+        }
     }
-
-    RawMessage *msg = new RawMessage(":%s %03d %s :No topic is set", client->getHostName(), RPL_WHOREPLY, channel);
+    RawMessage *msg = new RawMessage(":%s %03d %s :End of /WHO list.", client->getHostName(), RPL_ENDOFWHO, channel);
     client->pushMessage(msg);
-
-
     return false;
 }
 

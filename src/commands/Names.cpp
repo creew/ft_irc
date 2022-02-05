@@ -30,13 +30,14 @@ void Names::sendChannelUsers(Client *client, const string &channelName) {
     if (channel != NULL && !channel->isSecretChannel() && !channel->isPrivateChannel()) {
         vector<Client *> clients = channel->getUsers();
         if (!clients.empty()) {
-            Client *firstClient = *clients.begin();
+            Client *iClient = *clients.begin();
             ServerRawMessage *msg = new ServerRawMessage(":%s %03d %s = %s :", client->getHostName(), RPL_NAMREPLY,
                                                          client->getNick().c_str(), channelName.c_str());
-            addUser(msg, channel, firstClient);
+            addUser(msg, channel, iClient);
             for (vector<Client *>::iterator iu = clients.begin() + 1; iu != clients.end(); iu++) {
+                iClient = *iu;
                 msg->addConst(" ");
-                addUser(msg, channel, firstClient);
+                addUser(msg, channel, iClient);
             }
             msg->finalize();
             client->pushMessage(msg);

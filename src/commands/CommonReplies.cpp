@@ -63,7 +63,7 @@ void CommonReplies::sendNotOnChannel(Client *client, const string &channel) {
 
 void CommonReplies::sendNotChannelOperator(Client *client, const string &channel) {
     RawMessage *msg = new RawMessage(":%s %03d %s :You're not channel operator",
-                                     client->getHostName(), ERR_NOTONCHANNEL, channel.c_str());
+                                     client->getHostName(), ERR_CHANOPRIVSNEEDED, channel.c_str());
     client->pushMessage(msg);
 }
 
@@ -71,4 +71,28 @@ void CommonReplies::sendNoSuchServer(Client *client, const string &channel) {
     RawMessage *msg = new RawMessage(":%s %03d %s :No such server",
                                      client->getHostName(), ERR_NOSUCHSERVER, channel.c_str());
     client->pushMessage(msg);
+}
+
+void CommonReplies::sendNoNickNameGiven(Client *client) {
+    RawMessage *msg = new RawMessage(":%s %03d %s :No nickname given",
+                                     client->getHostName(), ERR_NONICKNAMEGIVEN, client->getUser().c_str());
+    client->pushMessage(msg);
+}
+
+void CommonReplies::sendNickNameInUse(Client *client, string &nick) {
+    RawMessage *msg = new RawMessage(":%s %03d %s %s :Nickname is already in use",
+                                     client->getHostName(), ERR_NICKNAMEINUSE, client->getUser().c_str(), nick.c_str());
+    client->pushMessage(msg);
+}
+
+void CommonReplies::sendAllChannelUsers(Client *client, const string &channelName, RawMessage *message) {
+    Channel *channel = client->getChannelHandler()->findChannelByName(channelName);
+    if (channel != NULL) {
+        vector<Client *> clients = channel->getUsers();
+        for (vector<Client *>::iterator iu = clients.begin(); iu != clients.end(); iu++) {
+            Client *iClient = *iu;
+            iClient->pushMessage(message->clone());
+        }
+    }
+    delete message;
 }

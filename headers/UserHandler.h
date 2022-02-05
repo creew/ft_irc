@@ -16,6 +16,7 @@ public:
 
     void joinUser(Client *client);
     Client *findClientByFd(int fd);
+    Client *findClientByNick(string &nick);
     void removeClient(int fd);
     void sendMessages(int fd);
     int fillPoll(struct pollfd * polls, int maxSize, short events);

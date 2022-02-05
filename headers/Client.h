@@ -28,6 +28,7 @@ private:
     char recvBuf[512];
     int recvBufLength;
     char state;
+    bool registered;
     Server *server;
     std::queue<RawMessage *> sendQueue;
     bool opMode;
@@ -40,6 +41,9 @@ public:
 
     virtual ~Client();
 
+    bool operator==(const Client &rhs) const;
+
+    bool operator!=(const Client &rhs) const;
 
     /**
      * Returns true if need to disconnect user
@@ -82,6 +86,14 @@ public:
 
     void setOpMode(bool opMode) {
         Client::opMode = opMode;
+    }
+
+    bool isRegistered() const {
+        return registered;
+    }
+
+    void setRegistered(bool registered) {
+        Client::registered = registered;
     }
 
     void pushMessage(RawMessage *outMessage);

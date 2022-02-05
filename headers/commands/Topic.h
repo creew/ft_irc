@@ -9,9 +9,9 @@ class Topic : public ICommand{
 
     const char *getName();
 
-    static void sendNoTopic(Client *client, const char *channel);
+    static void sendNoTopic(Client *client, const string &channel);
 
-    static void sendTopic(Client *client, const char *channel, const char *topic);
+    static void sendTopic(Client *client, const string &channel, const char *topic);
 };
 
 

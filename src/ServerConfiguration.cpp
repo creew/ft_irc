@@ -1,4 +1,4 @@
-#include <cstring>
+ #include <cstring>
 #include "ServerConfiguration.h"
 
 // [host:port_network:password_network] <port> <password>
