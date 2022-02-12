@@ -26,7 +26,21 @@ add_executable(ft_irc src/main.cpp
         src/ChannelHandler.cpp headers/ChannelHandler.h
         src/commands/Privmsg.cpp headers/commands/Privmsg.h
         src/UserHandler.cpp headers/UserHandler.h
-        src/commands/Mode.cpp headers/commands/Mode.h src/commands/Part.cpp headers/commands/Part.h src/commands/Topic.cpp headers/commands/Topic.h src/commands/Who.cpp headers/commands/Who.h src/messages/ClientRawMessage.cpp headers/messages/ClientRawMessage.h src/commands/Names.cpp headers/commands/Names.h src/messages/ServerRawMessage.cpp headers/messages/ServerRawMessage.h)
+        src/commands/Mode.cpp headers/commands/Mode.h
+        src/commands/Part.cpp headers/commands/Part.h
+        src/commands/Topic.cpp headers/commands/Topic.h
+        src/commands/Who.cpp headers/commands/Who.h
+        src/messages/ClientRawMessage.cpp headers/messages/ClientRawMessage.h
+        src/commands/Names.cpp headers/commands/Names.h
+        src/messages/ServerRawMessage.cpp headers/messages/ServerRawMessage.h
+        headers/channelmode/IChannelMode.h
+        headers/channelmode/PrivateChannelMode.h
+        headers/channelmode/SecretChannelMode.h
+        headers/channelmode/InviteOnlyChannelMode.h
+        headers/channelmode/TopicSettableChannelMode.h
+        headers/channelmode/NoMessageOutsideChannelMode.h
+        headers/channelmode/ModeratedChannelMode.h
+        )
 
 include_directories(headers)
 set_property(TARGET ft_irc PROPERTY CXX_STANDARD 98)

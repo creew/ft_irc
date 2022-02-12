@@ -14,7 +14,7 @@ bool Topic::run(Client *client, InMessage *message) {
         return false;
     }
     if (message->getParams().size() > 1) {
-        if (!channel->isTopicSettable()) {
+        if (channel->isModeActive("t") && !channel->isUserOps(client)) {
             CommonReplies::sendNotChannelOperator(client, channelName);
         } else {
             string topic = message->getParams().at(1);
@@ -38,8 +38,9 @@ void Topic::sendNoTopic(Client *client, const string &channel) {
 }
 
 void Topic::sendTopic(Client *client, const string &channel, const char *topic) {
-    RawMessage *msg = new RawMessage(":%s %03d %s :%s", client->getHostName(), RPL_TOPIC, channel.c_str(), topic);
-    CommonReplies::sendAllChannelUsers(client, channel, msg);
+    RawMessage *msg = new RawMessage(client->getHostName(), RPL_TOPIC, client->getNick().c_str(),
+                                     "%s :%s", channel.c_str(), topic);
+    client->pushMessage(msg);
 }
 
 const char *Topic::getName() {

@@ -19,7 +19,8 @@ bool Who::run(Client *client, InMessage *message) {
             client->pushMessage(msg);
         }
     }
-    RawMessage *msg = new RawMessage(":%s %03d %s :End of /WHO list.", client->getHostName(), RPL_ENDOFWHO, channel);
+    RawMessage *msg = new RawMessage(client->getHostName(), RPL_ENDOFWHO,client->getNick().c_str(),
+                                     "%s :End of /WHO list.", channel);
     client->pushMessage(msg);
     return false;
 }

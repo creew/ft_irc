@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include "channelmode/IChannelMode.h"
 
 using namespace std;
 
@@ -13,18 +14,13 @@ private:
     string name;
     string topic;
     vector<Client *> users;
-    bool privateChannel;  //p
-    bool secretChannel;  //s
-    bool inviteOnlyChannel;  //i
-    bool topicSettable;  //t
-    bool noMessagesOutside;  //n
-    bool moderatedChannel;  //m
+    vector<IChannelMode *> channelModes;
     vector<Client *> ops;
     vector<Client *> voiced;
 public:
-    explicit Channel(const string &name) : name(name), privateChannel(false), secretChannel(false),
-                                           inviteOnlyChannel(false),
-                                           topicSettable(true), noMessagesOutside(true), moderatedChannel(false) {}
+    explicit Channel(const string &name) : name(name) { }
+
+    virtual ~Channel();
 
     const string &getName() const {
         return name;
@@ -53,57 +49,17 @@ public:
         Channel::topic = topic;
     }
 
-    bool isPrivateChannel() const {
-        return privateChannel;
-    }
-
-    void setPrivateChannel(bool privateChannel) {
-        Channel::privateChannel = privateChannel;
-    }
-
-    bool isSecretChannel() const {
-        return secretChannel;
-    }
-
-    void setSecretChannel(bool secretChannel) {
-        Channel::secretChannel = secretChannel;
-    }
-
-    bool isInviteOnlyChannel() const {
-        return inviteOnlyChannel;
-    }
-
-    void setInviteOnlyChannel(bool inviteOnlyChannel) {
-        Channel::inviteOnlyChannel = inviteOnlyChannel;
-    }
-
-    bool isTopicSettable() const {
-        return topicSettable;
-    }
-
-    void setTopicSettable(bool topicSettable) {
-        Channel::topicSettable = topicSettable;
-    }
-
-    bool isNoMessagesOutside() const {
-        return noMessagesOutside;
-    }
-
-    void setNoMessagesOutside(bool noMessagesOutside) {
-        Channel::noMessagesOutside = noMessagesOutside;
-    }
-
-    bool isModeratedChannel() const {
-        return moderatedChannel;
-    }
-
-    void setModeratedChannel(bool moderatedChannel) {
-        Channel::moderatedChannel = moderatedChannel;
-    }
-
     bool putUser(Client *pClient);
 
     void addToOps(Client *client);
+
+    bool isModeActive(const char *mode);
+
+    bool setMode(char mode);
+
+    const vector<IChannelMode *> &getChannelModes() const {
+        return channelModes;
+    }
 };
 
 

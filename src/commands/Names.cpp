@@ -27,7 +27,7 @@ const char *Names::getName() {
 
 void Names::sendChannelUsers(Client *client, const string &channelName) {
     Channel *channel = client->getChannelHandler()->findChannelByName(channelName);
-    if (channel != NULL && !channel->isSecretChannel() && !channel->isPrivateChannel()) {
+    if (channel != NULL && !channel->isModeActive("s") && !channel->isModeActive("p")) {
         vector<Client *> clients = channel->getUsers();
         if (!clients.empty()) {
             Client *iClient = *clients.begin();
@@ -43,8 +43,8 @@ void Names::sendChannelUsers(Client *client, const string &channelName) {
             client->pushMessage(msg);
         }
     }
-    RawMessage *msg = new RawMessage(":%s %03d %s %s :End of /NAMES list", client->getHostName(), RPL_ENDOFNAMES,
-                                                 client->getNick().c_str(), channelName.c_str());
+    RawMessage *msg = new RawMessage(client->getHostName(), RPL_ENDOFNAMES, client->getNick().c_str(),
+                                     "%s :End of /NAMES list", channelName.c_str());
     client->pushMessage(msg);
 
 }

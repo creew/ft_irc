@@ -43,11 +43,11 @@ ChannelHandler::~ChannelHandler() {
 bool ChannelHandler::sendMessageToChannel(Client *clientFrom, string &channelTo, string &message) {
     for (vector<Channel *>::iterator ic = channels.begin(); ic != channels.end(); ic++) {
         Channel *channel = *ic;
-        if ((channel->isNoMessagesOutside() && !channel->isUserOnChannel(clientFrom)) ||
-            (channel->isModeratedChannel() &&
+        if ((channel->isModeActive("n") && !channel->isUserOnChannel(clientFrom)) ||
+            (channel->isModeActive("m") &&
              (!channel->isUserOps(clientFrom) && !channel->isUserVoiced(clientFrom)))) {
-            RawMessage *msg = new RawMessage(":%s %03d %s %s :Cannot send to channel", clientFrom->getHostName(),
-                                             ERR_CANNOTSENDTOCHAN, clientFrom->getNick().c_str(), channelTo.c_str());
+            RawMessage *msg = new RawMessage(clientFrom->getHostName(), ERR_CANNOTSENDTOCHAN, clientFrom->getNick().c_str(),
+                                             "%s :Cannot send to channel", channelTo.c_str());
             clientFrom->pushMessage(msg);
             return false;
 
@@ -64,8 +64,8 @@ bool ChannelHandler::sendMessageToChannel(Client *clientFrom, string &channelTo,
             return true;
         }
     }
-    RawMessage *msg = new RawMessage(":%s %03d %s %s :No such channel", clientFrom->getHostName(), ERR_NOSUCHCHANNEL,
-                                     clientFrom->getNick().c_str(), channelTo.c_str());
+    RawMessage *msg = new RawMessage(clientFrom->getHostName(), ERR_NOSUCHCHANNEL,
+                                     clientFrom->getNick().c_str(), "%s :No such channel", channelTo.c_str());
     clientFrom->pushMessage(msg);
     return false;
 }

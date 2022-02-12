@@ -10,6 +10,8 @@ protected:
 public:
     RawMessage(const char *format, ...);
 
+    RawMessage(const char *hostName, int msgId, const char *target, const char *format, ...);
+
     RawMessage();
 
     virtual ~RawMessage();

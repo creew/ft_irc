@@ -64,3 +64,36 @@ void Channel::addToOps(Client *client) {
     ops.push_back(client);
 }
 
+Channel::~Channel() {
+    for (vector<IChannelMode *>::iterator ic = channelModes.begin(); ic != channelModes.end(); ic++) {
+        IChannelMode *iChannelMode = *ic;
+        delete iChannelMode;
+    }
+    channelModes.clear();
+}
+
+
+/**
+ *
+ * @param mode:
+ * p - privateChannel
+ * s - secretChannel
+ * i - inviteOnlyChannel
+ * t - topicSettableOnlyOps
+ * n - noMessagesOutside
+ * m - moderatedChannes
+ * @return
+ */
+bool Channel::isModeActive(char mode) {
+    for (vector<IChannelMode *>::iterator ic = channelModes.begin(); ic != channelModes.end(); ic++) {
+        IChannelMode *iChannelMode = *ic;
+        if (strcmp(mode, iChannelMode->getName()) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Channel::setMode(char mode) {
+    return false;
+}
