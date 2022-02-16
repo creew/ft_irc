@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "channelmode/IChannelMode.h"
+#include "ChannelModeHandler.h"
 
 using namespace std;
 
@@ -51,11 +52,13 @@ public:
 
     bool putUser(Client *pClient);
 
-    void addToOps(Client *client);
+    bool addToOps(Client *client);
 
-    bool isModeActive(const char *mode);
+    bool removeFromOps(Client *client);
 
-    bool setMode(char mode);
+    bool isModeActive(char mode);
+
+    bool setMode(ChannelModeHandler *channelModeHandler, char mode, bool add);
 
     const vector<IChannelMode *> &getChannelModes() const {
         return channelModes;

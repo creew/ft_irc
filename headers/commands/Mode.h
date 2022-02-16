@@ -15,7 +15,7 @@ private:
 
     void sendCurrentMode(Channel *channel, Client *client);
 
-    void parseArgs(Channel *channel, const vector<string> &params, int startPos);
+    void parseArgs(Client *client, Channel *channel, const vector<string> &params, int startPos);
 };
 
 

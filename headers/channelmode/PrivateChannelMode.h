@@ -6,8 +6,8 @@
 #include "IChannelMode.h"
 
 class PrivateChannelMode : public IChannelMode {
-    const char *getName() {
-        return "p";
+    char getName() {
+        return 'p';
     }
 };
 

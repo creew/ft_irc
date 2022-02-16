@@ -5,8 +5,8 @@
 #include "IChannelMode.h"
 
 class ModeratedChannelMode : public IChannelMode {
-    const char *getName() {
-        return "m";
+    char getName() {
+        return 'm';
     }
 };
 

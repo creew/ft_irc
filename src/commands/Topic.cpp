@@ -14,7 +14,7 @@ bool Topic::run(Client *client, InMessage *message) {
         return false;
     }
     if (message->getParams().size() > 1) {
-        if (channel->isModeActive("t") && !channel->isUserOps(client)) {
+        if (channel->isModeActive('t') && !channel->isUserOps(client)) {
             CommonReplies::sendNotChannelOperator(client, channelName);
         } else {
             string topic = message->getParams().at(1);

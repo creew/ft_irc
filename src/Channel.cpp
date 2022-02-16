@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <Channel.h>
+#include "ChannelModeHandler.h"
 
 void Channel::removeUser(Client *user) {
     for (vector<Client *>::iterator iu = users.begin(); iu != users.end(); iu++) {
@@ -60,8 +61,24 @@ bool Channel::isUserVoiced(Client *client) {
     return false;
 }
 
-void Channel::addToOps(Client *client) {
+bool Channel::addToOps(Client *client) {
+    for (vector<Client *>::iterator iu = ops.begin(); iu != ops.end(); iu++) {
+        if ((*iu) == client) {
+            return false;
+        }
+    }
     ops.push_back(client);
+    return true;
+}
+
+bool Channel::removeFromOps(Client *client) {
+    for (vector<Client *>::iterator iu = ops.begin(); iu != ops.end(); iu++) {
+        if ((*iu) == client) {
+            ops.erase(iu--);
+            return true;
+        }
+    }
+    return false;
 }
 
 Channel::~Channel() {
@@ -87,13 +104,21 @@ Channel::~Channel() {
 bool Channel::isModeActive(char mode) {
     for (vector<IChannelMode *>::iterator ic = channelModes.begin(); ic != channelModes.end(); ic++) {
         IChannelMode *iChannelMode = *ic;
-        if (strcmp(mode, iChannelMode->getName()) == 0) {
+        if (mode == iChannelMode->getName()) {
             return true;
         }
     }
     return false;
 }
 
-bool Channel::setMode(char mode) {
-    return false;
+bool Channel::setMode(ChannelModeHandler *channelModeHandler, char mode, bool add) {
+    IChannelMode *channelMode = channelModeHandler->findByMode(mode);
+    if (channelMode == NULL) {
+        return false;
+    }
+    if (!add) {
+        return channelModeHandler->removeMode(channelModes, channelMode);
+    } else {
+        return channelModeHandler->addMode(channelModes, channelMode);
+    }
 }

@@ -16,6 +16,8 @@ public:
     static void sendNoTextToSend(Client *client);
     static void sendNoSuchChannel(Client *client, const string &channel);
 
+    static void sendNoSuchNickOrChannel(Client *client, const string &nick);
+
     static void sendNotOnChannel(Client *client, const string &channel);
 
     static void sendNotChannelOperator(Client *client, const string &channel);
@@ -25,6 +27,8 @@ public:
     static void sendNoNickNameGiven(Client *client);
 
     static void sendNickNameInUse(Client *client, string &nick);
+
+    static void sendTheyAreNotOnThatChannel(Client *client, const string &channelName, const string &nickName);
 
     static void sendAllChannelUsers(Client *client, const string &channelName, RawMessage *message);
 };

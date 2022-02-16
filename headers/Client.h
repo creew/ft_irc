@@ -105,6 +105,8 @@ public:
     ChannelHandler *getChannelHandler() const;
 
     UserHandler *getUserHandler() const;
+
+    ChannelModeHandler *getChannelModeHandler() const;
 };
 
 

@@ -98,6 +98,10 @@ UserHandler *Client::getUserHandler() const {
     return server->getUserHandler();
 }
 
+ChannelModeHandler *Client::getChannelModeHandler() const {
+    return server->getChannelModeHandler();
+}
+
 bool Client::operator==(const Client &rhs) const {
     return nick == rhs.nick;
 }

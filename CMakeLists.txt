@@ -40,6 +40,7 @@ add_executable(ft_irc src/main.cpp
         headers/channelmode/TopicSettableChannelMode.h
         headers/channelmode/NoMessageOutsideChannelMode.h
         headers/channelmode/ModeratedChannelMode.h
+        src/ChannelModeHandler.cpp headers/ChannelModeHandler.h
         )
 
 include_directories(headers)

@@ -8,6 +8,7 @@
 #include "CommandProcessor.h"
 #include "ChannelHandler.h"
 #include "UserHandler.h"
+#include "ChannelModeHandler.h"
 
 using namespace std;
 
@@ -24,6 +25,7 @@ private:
     CommandProcessor *commandProcessor;
     ChannelHandler *channelHandler;
     UserHandler *userHandler;
+    ChannelModeHandler *channelModeHandler;
 
     int fillPoll(struct pollfd *polls, int maxSize);
     void initRecvSocket();
@@ -51,6 +53,10 @@ public:
 
     UserHandler *getUserHandler() const {
         return userHandler;
+    }
+
+    ChannelModeHandler *getChannelModeHandler() const {
+        return channelModeHandler;
     }
 };
 

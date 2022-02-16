@@ -27,7 +27,7 @@ const char *Names::getName() {
 
 void Names::sendChannelUsers(Client *client, const string &channelName) {
     Channel *channel = client->getChannelHandler()->findChannelByName(channelName);
-    if (channel != NULL && !channel->isModeActive("s") && !channel->isModeActive("p")) {
+    if (channel != NULL && !channel->isModeActive('s') && !channel->isModeActive('p')) {
         vector<Client *> clients = channel->getUsers();
         if (!clients.empty()) {
             Client *iClient = *clients.begin();

@@ -5,8 +5,8 @@
 #include "IChannelMode.h"
 
 class TopicSettableChannelMode : public IChannelMode {
-    const char *getName() {
-        return "s";
+    char getName() {
+        return 't';
     }
 };
 

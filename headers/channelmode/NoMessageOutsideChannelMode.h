@@ -5,8 +5,8 @@
 #include "IChannelMode.h"
 
 class NoMessageOutsideChannelMode : public IChannelMode {
-    const char *getName() {
-        return "n";
+    char getName() {
+        return 'n';
     }
 };
 

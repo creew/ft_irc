@@ -56,6 +56,12 @@ void CommonReplies::sendNoSuchChannel(Client *client, const string &channel) {
     client->pushMessage(msg);
 }
 
+void CommonReplies::sendNoSuchNickOrChannel(Client *client, const string &nick) {
+    RawMessage *msg = new RawMessage(client->getHostName(), ERR_NOSUCHNICK, client->getNick().c_str(),
+                                     ":No such nick or channel", nick.c_str());
+    client->pushMessage(msg);
+}
+
 void CommonReplies::sendNotOnChannel(Client *client, const string &channel) {
     RawMessage *msg = new RawMessage( client->getHostName(), ERR_NOTONCHANNEL, client->getNick().c_str(),
                                       "%s :You're not on that channel", channel.c_str());
@@ -83,6 +89,12 @@ void CommonReplies::sendNoNickNameGiven(Client *client) {
 void CommonReplies::sendNickNameInUse(Client *client, string &nick) {
     RawMessage *msg = new RawMessage(client->getHostName(), ERR_NICKNAMEINUSE, client->getNick().c_str(),
                                      "%s :Nickname is already in use", nick.c_str());
+    client->pushMessage(msg);
+}
+
+void CommonReplies::sendTheyAreNotOnThatChannel(Client *client, const string &channelName, const string &nickName) {
+    RawMessage *msg = new RawMessage(":%s %03d %s %s :They aren't on that channel",
+                                     client->getHostName(), ERR_USERNOTINCHANNEL, channelName.c_str(), nickName.c_str());
     client->pushMessage(msg);
 }
 

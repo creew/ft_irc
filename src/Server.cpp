@@ -22,6 +22,7 @@ Server::Server(ServerConfiguration *configuration) :
     this->commandProcessor = new CommandProcessor();
     this->channelHandler = new ChannelHandler();
     this->userHandler = new UserHandler();
+    this->channelModeHandler = new ChannelModeHandler();
 }
 
 Server::~Server() {
@@ -29,6 +30,7 @@ Server::~Server() {
     delete commandProcessor;
     delete channelHandler;
     delete userHandler;
+    delete channelModeHandler;
 }
 
 void Server::initRecvSocket() {

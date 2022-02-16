@@ -1,6 +1,12 @@
 #include <unistd.h>
 #include "ChannelHandler.h"
 #include "messages/ClientRawMessage.h"
+#include "channelmode/InviteOnlyChannelMode.h"
+#include "channelmode/TopicSettableChannelMode.h"
+#include "channelmode/NoMessageOutsideChannelMode.h"
+#include "channelmode/SecretChannelMode.h"
+#include "channelmode/ModeratedChannelMode.h"
+#include "channelmode/PrivateChannelMode.h"
 
 bool ChannelHandler::joinChannel(Client *client, const string &name) {
     Channel *channel = findChannelByName(name);
@@ -43,8 +49,8 @@ ChannelHandler::~ChannelHandler() {
 bool ChannelHandler::sendMessageToChannel(Client *clientFrom, string &channelTo, string &message) {
     for (vector<Channel *>::iterator ic = channels.begin(); ic != channels.end(); ic++) {
         Channel *channel = *ic;
-        if ((channel->isModeActive("n") && !channel->isUserOnChannel(clientFrom)) ||
-            (channel->isModeActive("m") &&
+        if ((channel->isModeActive('n') && !channel->isUserOnChannel(clientFrom)) ||
+            (channel->isModeActive('m') &&
              (!channel->isUserOps(clientFrom) && !channel->isUserVoiced(clientFrom)))) {
             RawMessage *msg = new RawMessage(clientFrom->getHostName(), ERR_CANNOTSENDTOCHAN, clientFrom->getNick().c_str(),
                                              "%s :Cannot send to channel", channelTo.c_str());

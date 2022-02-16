@@ -5,8 +5,8 @@
 #include "IChannelMode.h"
 
 class SecretChannelMode : public IChannelMode {
-    const char *getName() {
-        return "s";
+    char getName() {
+        return 's';
     }
 };
 
