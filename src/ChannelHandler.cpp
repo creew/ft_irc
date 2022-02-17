@@ -15,7 +15,7 @@ bool ChannelHandler::joinChannel(Client *client, const string &name) {
     }
     channel = new Channel(name);
     channels.push_back(channel);
-    channel->addToOps(client);
+    channel->modifyOps(client, true);
     return channel->putUser(client);
 }
 
@@ -46,24 +46,23 @@ ChannelHandler::~ChannelHandler() {
     }
 }
 
-bool ChannelHandler::sendMessageToChannel(Client *clientFrom, string &channelTo, string &message) {
+bool ChannelHandler::sendMessageToChannel(Client *clientFrom, const string &type, const string &channelTo, const string &message) {
     for (vector<Channel *>::iterator ic = channels.begin(); ic != channels.end(); ic++) {
         Channel *channel = *ic;
         if ((channel->isModeActive('n') && !channel->isUserOnChannel(clientFrom)) ||
-            (channel->isModeActive('m') &&
-             (!channel->isUserOps(clientFrom) && !channel->isUserVoiced(clientFrom)))) {
+            ((channel->isModeActive('m') &&
+             (!channel->isUserOps(clientFrom) && !channel->isUserVoiced(clientFrom))))) {
             RawMessage *msg = new RawMessage(clientFrom->getHostName(), ERR_CANNOTSENDTOCHAN, clientFrom->getNick().c_str(),
                                              "%s :Cannot send to channel", channelTo.c_str());
             clientFrom->pushMessage(msg);
             return false;
-
         }
         if (channel->getName() == channelTo) {
             vector<Client *> users = channel->getUsers();
             for (vector<Client *>::iterator iu = users.begin(); iu != users.end(); iu++) {
                 Client *client = (*iu);
                 if (client != clientFrom) {
-                    RawMessage *msg = new ClientRawMessage(clientFrom, "PRIVMSG %s :%s", channelTo.c_str(), message.c_str());
+                    RawMessage *msg = new ClientRawMessage(clientFrom, "%s %s :%s", type.c_str(), channelTo.c_str(), message.c_str());
                     client->pushMessage(msg);
                 }
             }

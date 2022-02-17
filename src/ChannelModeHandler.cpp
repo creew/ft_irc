@@ -32,25 +32,23 @@ IChannelMode *ChannelModeHandler::findByMode(char mode) {
     return NULL;
 }
 
-bool ChannelModeHandler::addMode(vector<IChannelMode *> &modes, IChannelMode *mode) {
+bool ChannelModeHandler::changeMode(vector<IChannelMode *> &modes, IChannelMode *mode, bool add) {
     for (vector<IChannelMode *>::iterator ic = modes.begin(); ic != modes.end(); ic++) {
         IChannelMode *channelMode = *ic;
         if (channelMode == mode) {
-            return false;
+            if (add) {
+                return false;
+            } else {
+                modes.erase(ic--);
+                return true;
+            }
         }
     }
-    modes.push_back(mode);
-    return true;
-}
-
-bool ChannelModeHandler::removeMode(vector<IChannelMode *> &modes, IChannelMode *mode) {
-    for (vector<IChannelMode *>::iterator ic = modes.begin(); ic != modes.end(); ic++) {
-        IChannelMode *channelMode = *ic;
-        if (channelMode == mode) {
-            channelModes.erase(ic--);
-            return true;
-        }
+    if (add) {
+        modes.push_back(mode);
+        return true;
+    } else {
+        return false;
     }
-    return false;
 }
 

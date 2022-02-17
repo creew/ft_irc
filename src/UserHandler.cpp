@@ -54,11 +54,11 @@ int UserHandler::fillPoll(struct pollfd *polls, int maxSize, short events) {
     return i;
 }
 
-bool UserHandler::sendMessageToUser(Client *clientFrom, string &user, string &message) {
+bool UserHandler::sendMessageToUser(Client *clientFrom, const string &type, const string &user, const string &message) {
     for (vector<Client *>::iterator it = clients.begin(); it != clients.end(); it++) {
         Client *clientTo = *it;
         if (user == clientTo->getNick()) {
-            RawMessage *msg = new ClientRawMessage(clientFrom, "PRIVMSG %s :%s", user.c_str(), message.c_str());
+            RawMessage *msg = new ClientRawMessage(clientFrom, "%s %s :%s", type.c_str(), user.c_str(), message.c_str());
             clientTo->pushMessage(msg);
             return true;
         }

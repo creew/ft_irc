@@ -37,7 +37,7 @@ void Part::partChannel(Client *client, const string &channel, const string &umsg
         } else {
             client->getChannelHandler()->removeClientFromChannel(client);
             RawMessage *msg = new ClientRawMessage(client, "PART %s :%s", channel.c_str(), umsg.c_str());
-            client->pushMessage(msg);
+            CommonReplies::sendAllChannelUsers(client, channel, msg);
         }
     }
 }

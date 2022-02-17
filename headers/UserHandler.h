@@ -20,7 +20,7 @@ public:
     void removeClient(int fd);
     void sendMessages(int fd);
     int fillPoll(struct pollfd * polls, int maxSize, short events);
-    bool sendMessageToUser(Client *clientFrom, string &user, string &message);
+    bool sendMessageToUser(Client *clientFrom, const string &type, const string &user, const string &message);
 };
 
 

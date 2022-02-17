@@ -17,9 +17,7 @@ public:
 
     IChannelMode *findByMode(char mode);
 
-    bool addMode(vector<IChannelMode *> &channelModes, IChannelMode *mode);
-
-    bool removeMode(vector<IChannelMode *> &channelModes, IChannelMode *mode);
+    bool changeMode(vector<IChannelMode *> &channelModes, IChannelMode *mode, bool add);
 };
 
 

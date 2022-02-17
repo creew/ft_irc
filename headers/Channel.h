@@ -52,9 +52,9 @@ public:
 
     bool putUser(Client *pClient);
 
-    bool addToOps(Client *client);
+    bool modifyOps(Client *client, bool add);
 
-    bool removeFromOps(Client *client);
+    bool modifyVoiced(Client *client, bool add);
 
     bool isModeActive(char mode);
 

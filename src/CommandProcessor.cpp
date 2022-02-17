@@ -15,6 +15,8 @@
 #include "commands/Topic.h"
 #include "commands/Who.h"
 #include "commands/Names.h"
+#include "commands/Kick.h"
+#include "commands/Notice.h"
 
 bool CommandProcessor::processAction(char *command, Client *client) {
     InMessage *message = new InMessage(command);
@@ -33,10 +35,12 @@ bool CommandProcessor::processAction(char *command, Client *client) {
 
 CommandProcessor::CommandProcessor() {
     commands.push_back(new Join());
+    commands.push_back(new Kick());
     commands.push_back(new List());
     commands.push_back(new Mode());
     commands.push_back(new Names());
     commands.push_back(new Nick());
+    commands.push_back(new Notice());
     commands.push_back(new Part());
     commands.push_back(new Pass());
     commands.push_back(new Ping());

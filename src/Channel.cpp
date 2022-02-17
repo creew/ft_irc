@@ -43,6 +43,8 @@ bool Channel::isUserOnChannel(Client *client) {
     return false;
 }
 
+
+
 bool Channel::isUserOps(Client *client) {
     for (vector<Client *>::iterator iu = ops.begin(); iu != ops.end(); iu++) {
         if ((*iu) == client) {
@@ -61,24 +63,42 @@ bool Channel::isUserVoiced(Client *client) {
     return false;
 }
 
-bool Channel::addToOps(Client *client) {
+bool Channel::modifyOps(Client *client, bool add) {
     for (vector<Client *>::iterator iu = ops.begin(); iu != ops.end(); iu++) {
         if ((*iu) == client) {
-            return false;
+            if (add) {
+                return false;
+            } else {
+                ops.erase(iu--);
+                return true;
+            }
         }
     }
-    ops.push_back(client);
-    return true;
+    if (add) {
+        ops.push_back(client);
+        return true;
+    } else {
+        return false;
+    }
 }
 
-bool Channel::removeFromOps(Client *client) {
-    for (vector<Client *>::iterator iu = ops.begin(); iu != ops.end(); iu++) {
+bool Channel::modifyVoiced(Client *client, bool add) {
+    for (vector<Client *>::iterator iu = voiced.begin(); iu != voiced.end(); iu++) {
         if ((*iu) == client) {
-            ops.erase(iu--);
-            return true;
+            if (add) {
+                return false;
+            } else {
+                voiced.erase(iu--);
+                return true;
+            }
         }
     }
-    return false;
+    if (add) {
+        voiced.push_back(client);
+        return true;
+    } else {
+        return false;
+    }
 }
 
 Channel::~Channel() {
@@ -116,9 +136,5 @@ bool Channel::setMode(ChannelModeHandler *channelModeHandler, char mode, bool ad
     if (channelMode == NULL) {
         return false;
     }
-    if (!add) {
-        return channelModeHandler->removeMode(channelModes, channelMode);
-    } else {
-        return channelModeHandler->addMode(channelModes, channelMode);
-    }
+    return channelModeHandler->changeMode(channelModes, channelMode, add);
 }

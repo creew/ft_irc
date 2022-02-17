@@ -89,12 +89,31 @@ void Mode::parseArgs(Client *client, Channel *channel, const vector<string> &par
                             CommonReplies::sendTheyAreNotOnThatChannel(client, channel->getName(), nick);
                             break;
                         }
-                        RawMessage *message = new ClientRawMessage(client, "MODE %s %so %s", channel->getName().c_str(), add ? "+" : "-", nick.c_str());
-                        CommonReplies::sendAllChannelUsers(client, channel->getName(), message);
-                        if (add) {
-                            channel->addToOps(adds);
-                        } else {
-                            channel->removeFromOps(adds);
+                        if (channel->modifyOps(adds, add)) {
+                            RawMessage *message = new ClientRawMessage(client, "MODE %s %so %s", channel->getName().c_str(), add ? "+" : "-", nick.c_str());
+                            CommonReplies::sendAllChannelUsers(client, channel->getName(), message);
+                        }
+                    }
+                    break;
+                case 'v':
+                    if (!channel->isUserOps(client)) {
+                        CommonReplies::sendNotChannelOperator(client, channel->getName());
+                        return;
+                    }
+                    if (startPos < params.size()) {
+                        string nick = params.at(startPos++);
+                        Client * adds = client->getUserHandler()->findClientByNick(nick);
+                        if (adds == NULL) {
+                            CommonReplies::sendNoSuchNickOrChannel(client, nick);
+                            break;
+                        }
+                        if (!channel->isUserOnChannel(adds)) {
+                            CommonReplies::sendTheyAreNotOnThatChannel(client, channel->getName(), nick);
+                            break;
+                        }
+                        if (channel->modifyVoiced(adds, add)) {
+                            RawMessage *message = new ClientRawMessage(client, "MODE %s %sv %s", channel->getName().c_str(), add ? "+" : "-", nick.c_str());
+                            CommonReplies::sendAllChannelUsers(client, channel->getName(), message);
                         }
                     }
                     break;

@@ -41,7 +41,8 @@ add_executable(ft_irc src/main.cpp
         headers/channelmode/NoMessageOutsideChannelMode.h
         headers/channelmode/ModeratedChannelMode.h
         src/ChannelModeHandler.cpp headers/ChannelModeHandler.h
-        )
+        src/commands/Kick.cpp headers/commands/Kick.h
+        src/commands/Notice.cpp headers/commands/Notice.h)
 
 include_directories(headers)
 set_property(TARGET ft_irc PROPERTY CXX_STANDARD 98)

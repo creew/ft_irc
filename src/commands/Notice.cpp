@@ -1,7 +1,7 @@
-#include <commands/CommonReplies.h>
-#include "commands/Privmsg.h"
+#include "commands/Notice.h"
+#include "commands/CommonReplies.h"
 
-bool Privmsg::run(Client *client, InMessage *message) {
+bool Notice::run(Client *client, InMessage *message) {
     if (message->getParams().empty() || message->getParams().at(0).empty()) {
         CommonReplies::sendNoRecipientGiven(client, message->getCommand());
         return false;
@@ -20,6 +20,6 @@ bool Privmsg::run(Client *client, InMessage *message) {
     return false;
 }
 
-const char *Privmsg::getName() {
-    return "PRIVMSG";
+const char *Notice::getName() {
+    return "NOTICE";
 }
