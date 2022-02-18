@@ -7,7 +7,8 @@ bool Names::run(Client *client, InMessage *message) {
 
     } else {
         string param = message->getParams().at(0);
-        int startPos = 0, endPos;
+        std::basic_string<char>::size_type startPos = 0;
+        std::basic_string<char>::size_type endPos;
         string channel;
         while ((endPos = param.find(',', startPos)) != std::string::npos) {
             channel = param.substr(startPos, endPos - startPos);

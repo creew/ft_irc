@@ -16,9 +16,9 @@ void Server::start() {
 }
 
 Server::Server(ServerConfiguration *configuration) :
-        configuration(configuration),
+        client_socket(0),
         run(false),
-        client_socket(0) {
+        configuration(configuration) {
     this->commandProcessor = new CommandProcessor();
     this->channelHandler = new ChannelHandler();
     this->userHandler = new UserHandler();
@@ -26,7 +26,6 @@ Server::Server(ServerConfiguration *configuration) :
 }
 
 Server::~Server() {
-    cout << "hello from destructor" << endl;
     delete commandProcessor;
     delete channelHandler;
     delete userHandler;
@@ -100,7 +99,7 @@ void Server::startListen() {
                 userHandler->sendMessages(polls[i].fd);
             }
         }
-    }  while (run && !stopAll);
+    }  while (run);
 }
 
 void Server::acceptNewConnection(const pollfd *polls) {

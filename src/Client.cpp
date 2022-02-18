@@ -6,8 +6,8 @@
 #include "StringUtils.h"
 
 Client::Client(int fd, Server *server, char *host) :
-        fd(fd), server(server), opMode(false), recvBuf(),
-        recvBufLength(0), state(), host(host), registered(false) {
+        fd(fd), host(host), recvBuf(), recvBufLength(0),
+        state(), registered(false), server(server), opMode(false) {
 }
 
 Client::~Client() {
@@ -29,7 +29,7 @@ bool Client::processData(const char *data, size_t length) {
         }
     }
 
-    for (int i = 0; i < length; i++) {
+    for (size_t i = 0; i < length; i++) {
         switch (this->state) {
             case BODY:
                 this->recvBuf[this->recvBufLength++] = data[i];

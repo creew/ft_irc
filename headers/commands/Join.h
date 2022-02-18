@@ -8,7 +8,7 @@ class Join : public ICommand{
 
     const char *getName();
 private:
-    void joinChannel(Client *client, const string &channel) const;
+    void joinChannel(Client *client, const string &channelName) const;
 };
 
 #endif //FT_IRC_JOIN_H

@@ -12,7 +12,8 @@ bool Join::run(Client *client, InMessage *message) {
         return false;
     }
     string param = message->getParams().at(0);
-    int startPos = 0, endPos;
+    std::basic_string<char>::size_type startPos = 0;
+    std::basic_string<char>::size_type endPos;
     string channel;
     while ((endPos = param.find(',', startPos)) != std::string::npos) {
         channel = param.substr(startPos, endPos - startPos);
@@ -25,11 +26,12 @@ bool Join::run(Client *client, InMessage *message) {
     return false;
 }
 
-void Join::joinChannel(Client *client, const string &channel) const {
-    if (client->getChannelHandler()->joinChannel(client, channel)) {
-        RawMessage *msg = new ClientRawMessage(client, "JOIN :%s", channel.c_str());
+void Join::joinChannel(Client *client, const string &channelName) const {
+    Channel *channel = client->getChannelHandler()->joinChannel(client, channelName);
+    if (channel != NULL) {
+        RawMessage *msg = new ClientRawMessage(client, "JOIN :%s", channelName.c_str());
         CommonReplies::sendAllChannelUsers(client, channel, msg);
-        Names::sendChannelUsers(client, channel);
+        Names::sendChannelUsers(client, channelName);
     }
 }
 

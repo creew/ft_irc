@@ -1,11 +1,11 @@
-
+#include <cstddef>
 #include "messages/ClientRawMessage.h"
 
 ClientRawMessage::ClientRawMessage(Client *client, const char *format...) : RawMessage() {
     int prefixLength, bodyLength;
     va_list args, copy_args;
     va_start(args, format);
-    va_copy(copy_args, args);
+    __va_copy(copy_args, args);
     prefixLength = snprintf(NULL, 0, CLIENT_MSG_PREFIX,
                             client->getNick().c_str(), client->getUser().c_str(), client->getHost().c_str());
     bodyLength = vsnprintf(NULL, 0, format, args);

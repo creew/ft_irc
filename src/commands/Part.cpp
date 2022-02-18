@@ -12,7 +12,8 @@ bool Part::run(Client *client, InMessage *message) {
     if (message->getParams().size() > 1) {
         msg = message->getParams().at(1);
     }
-    int startPos = 0, endPos;
+    std::basic_string<char>::size_type startPos = 0;
+    std::basic_string<char>::size_type endPos;
     string channel;
     string param = message->getParams().at(0);
     while ((endPos = param.find(',', startPos)) != std::string::npos) {
@@ -26,18 +27,17 @@ bool Part::run(Client *client, InMessage *message) {
     return false;
 }
 
-void Part::partChannel(Client *client, const string &channel, const string &umsg) {
-    Channel * ch = client->getChannelHandler()->findChannelByName(channel);
-    if (ch == NULL) {
-        CommonReplies::sendNoSuchChannel(client, channel);
+void Part::partChannel(Client *client, const string &channelName, const string &umsg) {
+    Channel * channel = client->getChannelHandler()->findChannelByName(channelName);
+    if (channel == NULL) {
+        CommonReplies::sendNoSuchChannel(client, channelName);
     } else {
-        Client *cl = client->getUserHandler()->findClientByFd(client->getFd());
-        if (cl == NULL) {
-            CommonReplies::sendNotOnChannel(client, channel);
+        if (!channel->isUserOnChannel(client)) {
+            CommonReplies::sendNotOnChannel(client, channelName);
         } else {
-            client->getChannelHandler()->removeClientFromChannel(client);
-            RawMessage *msg = new ClientRawMessage(client, "PART %s :%s", channel.c_str(), umsg.c_str());
+            RawMessage *msg = new ClientRawMessage(client, "PART %s :%s", channelName.c_str(), umsg.c_str());
             CommonReplies::sendAllChannelUsers(client, channel, msg);
+            client->getChannelHandler()->removeClientFromChannel(client);
         }
     }
 }

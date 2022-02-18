@@ -15,6 +15,9 @@ bool Mode::run(Client *client, InMessage *message) {
 }
 
 void Mode::processNick(Client *client, const string &nickName, const vector<string> &params) {
+    (void) client;
+    (void) nickName;
+    (void) params;
 }
 
 void Mode::processChannel(Client *client, const string &channelName, const vector<string> &params) {
@@ -41,7 +44,7 @@ void Mode::sendCurrentMode(Channel *channel, Client *client) {
     client->pushMessage(msg);
 }
 
-void Mode::parseArgs(Client *client, Channel *channel, const vector<string> &params, int startPos) {
+void Mode::parseArgs(Client *client, Channel *channel, const vector<string> &params, std::basic_string<char>::size_type startPos) {
     string addPerm = "+";
     string removePerm = "-";
     while (startPos < params.size()) {
@@ -91,7 +94,7 @@ void Mode::parseArgs(Client *client, Channel *channel, const vector<string> &par
                         }
                         if (channel->modifyOps(adds, add)) {
                             RawMessage *message = new ClientRawMessage(client, "MODE %s %so %s", channel->getName().c_str(), add ? "+" : "-", nick.c_str());
-                            CommonReplies::sendAllChannelUsers(client, channel->getName(), message);
+                            CommonReplies::sendAllChannelUsers(client, channel, message);
                         }
                     }
                     break;
@@ -113,7 +116,7 @@ void Mode::parseArgs(Client *client, Channel *channel, const vector<string> &par
                         }
                         if (channel->modifyVoiced(adds, add)) {
                             RawMessage *message = new ClientRawMessage(client, "MODE %s %sv %s", channel->getName().c_str(), add ? "+" : "-", nick.c_str());
-                            CommonReplies::sendAllChannelUsers(client, channel->getName(), message);
+                            CommonReplies::sendAllChannelUsers(client, channel, message);
                         }
                     }
                     break;
@@ -122,7 +125,7 @@ void Mode::parseArgs(Client *client, Channel *channel, const vector<string> &par
     }
     if (addPerm.size() > 1 || removePerm.size() > 1) {
         RawMessage *message = new ClientRawMessage(client, "MODE %s %s%s", channel->getName().c_str(), addPerm.c_str(), removePerm.c_str());
-        CommonReplies::sendAllChannelUsers(client, channel->getName(), message);
+        CommonReplies::sendAllChannelUsers(client, channel, message);
     }
 }
 

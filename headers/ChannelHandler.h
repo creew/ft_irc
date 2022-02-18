@@ -15,7 +15,7 @@ public:
 
     const vector<Channel *> &getChannels() const;
 
-    bool joinChannel(Client *client, const string &name);
+    Channel *joinChannel(Client *client, const string &name);
     void removeClientFromChannel(Client *client);
     bool sendMessageToChannel(Client *clientFrom, const string &type, const string &channelTo, const string &message);
     Channel *findChannelByName(const string &channel);

@@ -7,7 +7,7 @@
 RawMessage::RawMessage(const char *format...) {
     va_list args, copy_args;
     va_start(args, format);
-    va_copy(copy_args, args);
+    __va_copy(copy_args, args);
     this->length = vsnprintf(NULL, 0, format, args);
     this->message = new char[this->length + 3];
     vsnprintf(this->message, this->length + 1, format, copy_args);
@@ -39,7 +39,7 @@ RawMessage::RawMessage(const char *hostName, int msgId, const char *target, cons
     int firstPartLength, secondPartLength;
     va_list args, copy_args;
     va_start(args, format);
-    va_copy(copy_args, args);
+    __va_copy(copy_args, args);
     firstPartLength = snprintf(NULL, 0, ":%s %03d %s ", hostName, msgId, target);
     secondPartLength = vsnprintf(NULL, 0, format, args);
     this->length = firstPartLength + secondPartLength;

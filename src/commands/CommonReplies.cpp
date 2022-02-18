@@ -1,4 +1,4 @@
-#include <Errors.h>
+#include "Errors.h"
 #include "commands/CommonReplies.h"
 
 void CommonReplies::sendRplWelcome(Client *client) {
@@ -98,14 +98,12 @@ void CommonReplies::sendTheyAreNotOnThatChannel(Client *client, const string &ch
     client->pushMessage(msg);
 }
 
-void CommonReplies::sendAllChannelUsers(Client *client, const string &channelName, RawMessage *message) {
-    Channel *channel = client->getChannelHandler()->findChannelByName(channelName);
-    if (channel != NULL) {
-        vector<Client *> clients = channel->getUsers();
-        for (vector<Client *>::iterator iu = clients.begin(); iu != clients.end(); iu++) {
-            Client *iClient = *iu;
-            iClient->pushMessage(message->clone());
-        }
+void CommonReplies::sendAllChannelUsers(Client *client, Channel *channel, RawMessage *message) {
+    (void) client;
+    vector<Client *> clients = channel->getUsers();
+    for (vector<Client *>::iterator iu = clients.begin(); iu != clients.end(); iu++) {
+        Client *iClient = *iu;
+        iClient->pushMessage(message->clone());
     }
     delete message;
 }

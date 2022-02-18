@@ -30,7 +30,7 @@ public:
 
     static void sendTheyAreNotOnThatChannel(Client *client, const string &channelName, const string &nickName);
 
-    static void sendAllChannelUsers(Client *client, const string &channelName, RawMessage *message);
+    static void sendAllChannelUsers(Client *client, Channel *channel, RawMessage *message);
 };
 
 

@@ -3,6 +3,7 @@
 #include "commands/List.h"
 
 bool List::run(Client *client, InMessage *message) {
+    (void) message;
     sendRplListStart(client);
     return false;
 }

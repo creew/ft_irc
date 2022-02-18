@@ -1,22 +1,20 @@
 #include <unistd.h>
 #include "ChannelHandler.h"
 #include "messages/ClientRawMessage.h"
-#include "channelmode/InviteOnlyChannelMode.h"
-#include "channelmode/TopicSettableChannelMode.h"
-#include "channelmode/NoMessageOutsideChannelMode.h"
-#include "channelmode/SecretChannelMode.h"
-#include "channelmode/ModeratedChannelMode.h"
-#include "channelmode/PrivateChannelMode.h"
 
-bool ChannelHandler::joinChannel(Client *client, const string &name) {
+Channel *ChannelHandler::joinChannel(Client *client, const string &name) {
     Channel *channel = findChannelByName(name);
     if (channel != NULL) {
-        return channel->putUser(client);
+        if (channel->putUser(client)) {
+            return channel;
+        } else return NULL;
     }
     channel = new Channel(name);
     channels.push_back(channel);
     channel->modifyOps(client, true);
-    return channel->putUser(client);
+    if (channel->putUser(client)) {
+        return channel;
+    } else return NULL;
 }
 
 void ChannelHandler::disconnectUserFromServer(Client *client) {

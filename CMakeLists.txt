@@ -46,3 +46,4 @@ add_executable(ft_irc src/main.cpp
 
 include_directories(headers)
 set_property(TARGET ft_irc PROPERTY CXX_STANDARD 98)
+add_compile_options(-Wall -Wextra -Werror)

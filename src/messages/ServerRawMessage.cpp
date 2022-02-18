@@ -5,7 +5,7 @@ ServerRawMessage::ServerRawMessage(const char *format, ...) : RawMessage() {
     char *buf;
     va_list args, copy_args;
     va_start(args, format);
-    va_copy(copy_args, args);
+    __va_copy(copy_args, args);
     bodyLength = vsnprintf(NULL, 0, format, args);
     buf = new char[bodyLength + 1];
     vsnprintf(buf, bodyLength + 1, format, copy_args);

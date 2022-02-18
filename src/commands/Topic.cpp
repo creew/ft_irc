@@ -19,7 +19,7 @@ bool Topic::run(Client *client, InMessage *message) {
         } else {
             string topic = message->getParams().at(1);
             RawMessage *msg = new ClientRawMessage(client, "TOPIC %s :%s", channelName.c_str(), topic.c_str());
-            CommonReplies::sendAllChannelUsers(client, channelName, msg);
+            CommonReplies::sendAllChannelUsers(client, channel, msg);
             channel->setTopic(topic);
         }
     } else {
