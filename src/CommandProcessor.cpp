@@ -17,6 +17,7 @@
 #include "commands/Names.h"
 #include "commands/Kick.h"
 #include "commands/Notice.h"
+#include "commands/Invite.h"
 
 bool CommandProcessor::processAction(char *command, Client *client) {
     InMessage *message = new InMessage(command);
@@ -34,6 +35,7 @@ bool CommandProcessor::processAction(char *command, Client *client) {
 }
 
 CommandProcessor::CommandProcessor() {
+    commands.push_back(new Invite());
     commands.push_back(new Join());
     commands.push_back(new Kick());
     commands.push_back(new List());

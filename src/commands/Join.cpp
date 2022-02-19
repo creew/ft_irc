@@ -4,7 +4,6 @@
 #include "ChannelHandler.h"
 #include "messages/ClientRawMessage.h"
 #include "commands/Names.h"
-#include "commands/Nick.h"
 
 bool Join::run(Client *client, InMessage *message) {
     if (message->getParams().empty()) {

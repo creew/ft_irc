@@ -1,4 +1,5 @@
 ALL_CPP =	commands/CommonReplies.cpp \
+		commands/Invite.cpp \
         commands/Join.cpp \
         commands/Kick.cpp \
         commands/List.cpp \

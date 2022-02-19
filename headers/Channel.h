@@ -18,6 +18,7 @@ private:
     vector<IChannelMode *> channelModes;
     vector<Client *> ops;
     vector<Client *> voiced;
+    vector<Client *> invited;
 public:
     explicit Channel(const string &name) : name(name) { }
 
@@ -45,6 +46,7 @@ public:
 
     bool isUserVoiced(Client *client);
 
+    bool isUserInvited(Client *client);
 
     void setTopic(const string &topic) {
         Channel::topic = topic;
@@ -55,6 +57,8 @@ public:
     bool modifyOps(Client *client, bool add);
 
     bool modifyVoiced(Client *client, bool add);
+
+    bool modifyInvited(Client *client, bool add);
 
     bool isModeActive(char mode);
 

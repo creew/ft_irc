@@ -18,6 +18,11 @@ void Channel::removeUser(Client *user) {
             voiced.erase(iu--);
         }
     }
+    for (vector<Client *>::iterator iu = invited.begin(); iu != invited.end(); iu++) {
+        if ((*iu) == user) {
+            invited.erase(iu--);
+        }
+    }
 }
 
 size_t Channel::usersCount() {
@@ -63,6 +68,15 @@ bool Channel::isUserVoiced(Client *client) {
     return false;
 }
 
+bool Channel::isUserInvited(Client *client) {
+    for (vector<Client *>::iterator iu = invited.begin(); iu != invited.end(); iu++) {
+        if ((*iu) == client) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool Channel::modifyOps(Client *client, bool add) {
     for (vector<Client *>::iterator iu = ops.begin(); iu != ops.end(); iu++) {
         if ((*iu) == client) {
@@ -95,6 +109,25 @@ bool Channel::modifyVoiced(Client *client, bool add) {
     }
     if (add) {
         voiced.push_back(client);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool Channel::modifyInvited(Client *client, bool add) {
+    for (vector<Client *>::iterator iu = invited.begin(); iu != invited.end(); iu++) {
+        if ((*iu) == client) {
+            if (add) {
+                return false;
+            } else {
+                invited.erase(iu--);
+                return true;
+            }
+        }
+    }
+    if (add) {
+        invited.push_back(client);
         return true;
     } else {
         return false;

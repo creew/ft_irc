@@ -5,12 +5,26 @@
 Channel *ChannelHandler::joinChannel(Client *client, const string &name) {
     Channel *channel = findChannelByName(name);
     if (channel != NULL) {
+        if (channel->isModeActive('i')) {
+            if (!channel->isUserInvited(client)) {
+                cannotJoinBecauseInvite(client, channel->getName());\
+                return NULL;
+            } else {
+                channel->modifyInvited(client, false);
+            }
+        }
         return channel->putUser(client) ? channel : NULL;
     }
     channel = new Channel(name);
     channels.push_back(channel);
     channel->modifyOps(client, true);
     return channel->putUser(client) ? channel : NULL;
+}
+
+void ChannelHandler::cannotJoinBecauseInvite(Client *client, const string &channel) {
+    RawMessage *msg = new RawMessage( client->getHostName(), ERR_INVITEONLYCHAN, client->getNick().c_str(),
+                                      "%s :Cannot join channel because it is invite only (+i)", channel.c_str());
+    client->pushMessage(msg);
 }
 
 void ChannelHandler::disconnectUserFromServer(Client *client) {

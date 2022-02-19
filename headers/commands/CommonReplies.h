@@ -31,6 +31,8 @@ public:
     static void sendTheyAreNotOnThatChannel(Client *client, const string &channelName, const string &nickName);
 
     static void sendAllChannelUsers(Client *client, Channel *channel, RawMessage *message);
+
+    static void sendUserOnChannel(Client *client, const string &nickName, const string &channelName);
 };
 
 

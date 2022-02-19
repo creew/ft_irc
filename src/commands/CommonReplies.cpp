@@ -54,13 +54,13 @@ void CommonReplies::sendNoRecipientGiven(Client *client, const string &command) 
 
 void CommonReplies::sendNoSuchChannel(Client *client, const string &channel) {
     RawMessage *msg = new RawMessage(client->getHostName(), ERR_NOSUCHCHANNEL, client->getNick().c_str(),
-                                     ":No such channel", channel.c_str());
+                                     "%s :No such channel", channel.c_str());
     client->pushMessage(msg);
 }
 
 void CommonReplies::sendNoSuchNickOrChannel(Client *client, const string &nick) {
     RawMessage *msg = new RawMessage(client->getHostName(), ERR_NOSUCHNICK, client->getNick().c_str(),
-                                     ":No such nick or channel", nick.c_str());
+                                     "%s :No such nick or channel", nick.c_str());
     client->pushMessage(msg);
 }
 
@@ -108,4 +108,11 @@ void CommonReplies::sendAllChannelUsers(Client *client, Channel *channel, RawMes
         iClient->pushMessage(message->clone());
     }
     delete message;
+}
+
+void CommonReplies::sendUserOnChannel(Client *client, const string &nickName, const string &channelName) {
+    RawMessage *msg = new RawMessage(":%s %03d %s %s %s :is already on channel",
+                                     client->getHostName(), ERR_USERONCHANNEL, client->getNick().c_str(),
+                                     nickName.c_str(), channelName.c_str());
+    client->pushMessage(msg);
 }

@@ -16,6 +16,7 @@ public:
     const vector<Channel *> &getChannels() const;
 
     Channel *joinChannel(Client *client, const string &name);
+    void cannotJoinBecauseInvite(Client *client, const string &channel);
     void removeClientFromAllChannels(Client *client);
     void removeClientFromChannel(Channel *channel, Client *client);
     bool sendMessageToChannel(Client *clientFrom, const string &type, const string &channelTo, const string &message);
