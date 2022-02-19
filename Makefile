@@ -40,7 +40,7 @@ DEPENDS = ${OBJS:.o=.d}
 
 FLAGS = -Wall -Wextra -Werror -std=c++98
 
-NAME = ft_irc
+NAME = ircserv
 
 all: $(NAME)
 
