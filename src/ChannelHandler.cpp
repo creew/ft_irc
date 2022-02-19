@@ -5,30 +5,37 @@
 Channel *ChannelHandler::joinChannel(Client *client, const string &name) {
     Channel *channel = findChannelByName(name);
     if (channel != NULL) {
-        if (channel->putUser(client)) {
-            return channel;
-        } else return NULL;
+        return channel->putUser(client) ? channel : NULL;
     }
     channel = new Channel(name);
     channels.push_back(channel);
     channel->modifyOps(client, true);
-    if (channel->putUser(client)) {
-        return channel;
-    } else return NULL;
+    return channel->putUser(client) ? channel : NULL;
 }
 
 void ChannelHandler::disconnectUserFromServer(Client *client) {
     close(client->getFd());
-    removeClientFromChannel(client);
+    removeClientFromAllChannels(client);
 }
 
-void ChannelHandler::removeClientFromChannel(Client *client) {
+void ChannelHandler::removeClientFromAllChannels(Client *client) {
     for (vector<Channel *>::iterator ic = channels.begin(); ic != channels.end(); ic++) {
         Channel *channel = (*ic);
         channel->removeUser(client);
         if (channel->usersCount() == 0) {
             delete channel;
             channels.erase(ic--);
+        }
+    }
+}
+
+void ChannelHandler::removeClientFromChannel(Channel *channel, Client *client) {
+    vector<Channel *>::iterator id = find(channels.begin(), channels.end(), channel);
+    if (id != channels.end()) {
+        channel->removeUser(client);
+        if (channel->usersCount() == 0) {
+            delete channel;
+            channels.erase(id);
         }
     }
 }

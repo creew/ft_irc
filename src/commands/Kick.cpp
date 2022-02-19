@@ -31,7 +31,7 @@ bool Kick::run(Client *client, InMessage *message) {
     RawMessage *rawMessage = new ClientRawMessage(client, "KICK %s %s %s", channel->getName().c_str(),
                                                   nickName.c_str(), s.c_str());
     CommonReplies::sendAllChannelUsers(client, channel, rawMessage);
-    client->getChannelHandler()->removeClientFromChannel(kickClient);
+    client->getChannelHandler()->removeClientFromChannel(channel, kickClient);
     return false;
 }
 

@@ -28,7 +28,7 @@ bool Part::run(Client *client, InMessage *message) {
 }
 
 void Part::partChannel(Client *client, const string &channelName, const string &umsg) {
-    Channel * channel = client->getChannelHandler()->findChannelByName(channelName);
+    Channel *channel = client->getChannelHandler()->findChannelByName(channelName);
     if (channel == NULL) {
         CommonReplies::sendNoSuchChannel(client, channelName);
     } else {
@@ -37,7 +37,7 @@ void Part::partChannel(Client *client, const string &channelName, const string &
         } else {
             RawMessage *msg = new ClientRawMessage(client, "PART %s :%s", channelName.c_str(), umsg.c_str());
             CommonReplies::sendAllChannelUsers(client, channel, msg);
-            client->getChannelHandler()->removeClientFromChannel(client);
+            client->getChannelHandler()->removeClientFromChannel(channel, client);
         }
     }
 }
