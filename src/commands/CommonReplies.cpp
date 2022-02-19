@@ -13,7 +13,7 @@ void CommonReplies::sendRplWelcome(Client *client) {
 }
 
 void CommonReplies::sendRplYourHost(Client *client) {
-    RawMessage *msg = new RawMessage(client->getHostName(), RPL_YOURHOST, client->getNick().c_str(), ":Your host is %s, running version 1.000.00",
+    RawMessage *msg = new RawMessage(client->getHostName(), RPL_YOURHOST, client->getNick().c_str(), ":Your host is %s, running version 01.000.00",
                                      "localhost");
     client->pushMessage(msg);
     sendRplCreated(client);
@@ -26,8 +26,10 @@ void CommonReplies::sendRplCreated(Client *client) {
     sendRplMyInfo(client);
 }
 
+//:server 004 <nick> <servername> <version> <available umodes> <available cmodes> [<cmodes with param>]
 void CommonReplies::sendRplMyInfo(Client *client) {
-    RawMessage *msg = new RawMessage(client->getHostName(), RPL_MYINFO, client->getNick().c_str(), ":%s",
+    RawMessage *msg = new RawMessage(client->getHostName(), RPL_MYINFO, client->getNick().c_str(),
+                                     "ft_irc 01.000.00 io psnmtiobv",
                                      client->getNick().c_str());
     client->pushMessage(msg);
 }

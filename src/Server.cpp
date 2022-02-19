@@ -10,7 +10,6 @@
 #include "messages/RawMessage.h"
 #include "UserHandler.h"
 
-extern char stopAll;
 void Server::start() {
     startListen();
 }

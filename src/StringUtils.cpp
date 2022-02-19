@@ -61,12 +61,14 @@ char StringUtils::toUpper(char c)
 
 int	StringUtils::strcmpNoCase(const char *s1, const char *s2)
 {
-    while (*s1 && *s2)
+    unsigned char c1 = toUpper(*s1++);
+    unsigned char c2 = toUpper(*s2++);
+    while (c1 && c2)
     {
-        if (*s1 != *s2)
-            return ((unsigned char) toUpper(*s1) - (unsigned char) toUpper(*s2));
-        s1++;
-        s2++;
+        if (c1 != c2)
+            break;
+        c1 = toUpper(*s1++);
+        c2 = toUpper(*s2++);
     }
-    return ((unsigned char)*s1 - (unsigned char)*s2);
+    return (c1 - c2);
 }
